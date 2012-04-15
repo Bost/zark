@@ -33,6 +33,24 @@
      )
   )
 
+(def myfns
+[
+	{:func '"(map #(* 1 %) [4 5 6])" :doc "some desc" }
+	{:func '"(map #(* 2 %) [1 2 3])" :doc "other desc"}
+	]
+)
+
+(defn mval [entry]
+ (let [
+  func (get entry :func)
+  doc (get entry :doc)
+  ]
+  (println func "=" (eval (read-string func)) "::" doc)
+ ))
+
+(defn go []
+  (map #(mval %) myfns))
+
 (defmacro m-zz[p1 p2 result]
   `(let [
          p1# ~p1
