@@ -1,80 +1,78 @@
 (ns zark.core)
 
 (comment
-; use these commands on repl
-(in-ns 'zark.core)
-(load "../zark/core")
-)
-
-(def fns [* +])
-
-(defn z [p1 result]
-  "Function for one parameter p1 and a result"
-  (doseq [fi fns]
-  (if (= (fi p1) result)
-    (println fi p1 "=" result)
-    (println fi p1 "not=" result)
-    ))
+  ; use following commands on repl
+  (in-ns 'zark.core)
+  (load "../zark/core")
   )
 
-(defn zz [p1 p2 result]
-  "Function for two parameters p1 p2 and a result"
-  (doseq [fi fns]
-  (if (= (fi p1 p2) result)
-    (println fi p1 p2 "=" result)
-    (println fi p1 p2 "not=" result)
-    ))
-  )
+(def fns '[* +])
 
-"Print evaluated expression and return its result"
+(defn z [p1 res]
+  ^{ :doc "Apply all functions from fns to p1, each time compare result with res and print comparision result" }
+  (doseq [fi fns]
+    (let [
+          s (str "(" fi " " p1 ")")
+          ]
+      (if (= ((eval fi) p1) res)
+        (println s "==" res)
+        (println s "!=" res)))))
+
+(z 2 1)
+(z 2 2)
+(z 2 3)
+
+(defn zz [p1 p2 res]
+  ^{:doc "Apply all functions from fns to p1 and p2, each time compare result with res and print comparision result" }
+  (doseq [fi fns]
+    (let [
+          s (str "(" fi " " p1 " " p2 ")")
+          ]
+      (if (= ((eval fi) p1 p2) res)
+        (println s "==" res)
+        (println s "!=" res)))))
+
+(zz 2 2 2)
+(zz 2 2 4)
+(zz 2 2 5)
+
+"Print evaluated expression and return its res"
 (defmacro dbg[x]
   `(let [x# ~x]
      (println '~x "=" x#) x#
-     )
-  )
+     ))
 
-(def myfns
-[
-	{:func '"(map #(* 1 %) [4 5 6])" :doc "some desc" }
-	{:func '"(map #(* 2 %) [1 2 3])" :doc "other desc"}
-	]
-)
+(def myfns [
+            {:func '"(map #(* 1 %) [4 5 6])" :doc "some desc" }
+            {:func '"(map #(* 2 %) [1 2 3])" :doc "other desc"}
+            ])
 
 (defn mval [entry]
- (let [
-  func (get entry :func)
-  doc (get entry :doc)
-  ]
-  (println func "=" (eval (read-string func)) "::" doc)
- ))
+  (let [ func (get entry :func)
+        doc (get entry :doc) ]
+    (println func "=" (eval (read-string func)) "::" doc)))
 
 (defn go []
   (map #(mval %) myfns))
 
-(defmacro m-zz[p1 p2 result]
+(defmacro m-zz[p1 p2 res]
   `(let [
          p1# ~p1
          p2# ~p2
-         result# ~result
+         res# ~res
          ]
-     (zz p1# p2# result#)
-     (println '~p1 '~p2"=" result#) result#
-     )
-  )
+     (zz p1# p2# res#)
+     (println '~p1 '~p2"=" res#) res#))
 
 (defn generic-z
   ([] nil)
   ([p1] nil)
-  ([p1 result]
-   (z p1 result)
-   )
-  ([p1 p2 result]
-   (zz p1 p2 result)
-   )
-  ([p1 p2 p3 & result]
-   (println "(defn zzz [p1 p2 p3 & result]: i snot implemented)")
-   )
-  )
+  ([p1 res]
+   (z p1 res))
+  ([p1 p2 res]
+   (zz p1 p2 res))
+  ([p1 p2 p3 & res]
+   (println "(defn zzz [p1 p2 p3 & res]: is not implemented)")))
 
 (defn generic [p & args]
   "Just a test function for unspecified arity"
@@ -85,8 +83,6 @@
         p3 (first p2next)
         p3next (next p2next)
         ]
-    (println "p1:" p1 "; p2:" p2 "; p3:" p3 "; p3next:" p3next)
-    )
-  )
+    (println "p1:" p1 "; p2:" p2 "; p3:" p3 "; p3next:" p3next)))
 
 (println "Loaded")
