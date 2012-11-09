@@ -9,7 +9,8 @@
 (def fns '[* +])
 
 (defn z [p1 res]
-  ^{ :doc "Apply all functions from fns to p1, each time compare result with res and print comparision result" }
+  ^{ :doc "Apply all functions from fns to p1, each time compare result with res
+          and print comparision result" }
   (doseq [fi fns]
     (let [
           s (str "(" fi " " p1 ")")
@@ -23,7 +24,8 @@
 (z 2 3)
 
 (defn zz [p1 p2 res]
-  ^{:doc "Apply all functions from fns to p1 and p2, each time compare result with res and print comparision result" }
+  ^{:doc "Apply all functions from fns to p1 and p2, each time compare result
+         with res and print comparision result" }
   (doseq [fi fns]
     (let [
           s (str "(" fi " " p1 " " p2 ")")
@@ -84,5 +86,24 @@
         p3next (next p2next)
         ]
     (println "p1:" p1 "; p2:" p2 "; p3:" p3 "; p3next:" p3next)))
+
+(defn inc-if-match [item cnt sample]
+  ^{:doc "Return cnt+1 if the item is 'defn; otherwise return cnt" }
+  (if (= item sample)
+    (inc cnt)
+    cnt))
+
+(defn cnt-samples [coll sample]
+  ^{:doc "Return a count of samples in the coll" }
+  ;loop binds initial values once then binds values from each recursion call
+  (loop [coll coll
+         cnt 0
+         sample sample]
+    (if (empty? coll)
+      cnt
+      (recur (rest coll)
+             (inc-if-match (first coll) cnt sample) sample))))
+
+(cnt-samples '(1 defn 3 2 defn 2 defn) 'defn)
 
 (println "Loaded")
