@@ -107,3 +107,10 @@
 (cnt-samples '(1 defn 3 2 defn 2 defn) 'defn)
 
 (println "Loaded")
+
+(def f (slurp "/home/bost/dev/zark/src/zark/test.clj"))
+(def lf (read-string f))
+
+(println "lf: " lf)
+(println "samples: " (cnt-samples lf 'defn))
+
