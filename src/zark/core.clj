@@ -1,9 +1,12 @@
-(ns zark.core)
+(ns zark.core
+  (:use [datomic.api :only [db q] :as d]))
 
 (comment
   ; use following commands on repl
   (in-ns 'zark.core)
   (load "../zark/core")
+  ; on real REPL
+  (load-file "src/zark/core.clj")
   )
 
 (def fns '[* +])
@@ -108,9 +111,47 @@
 
 (println "Loaded")
 
-(def f (slurp "/home/bost/dev/zark/src/zark/test.clj"))
-(def lf (read-string f))
+;(comment
+  ;[:find ?var ?def ?cq ?t
+   ;:in $ :where
+   ;[?cn :code/name ?var]    ; get all varname, classname, methodname (+sig); ?cn contains codename-entity
+   ;[?cq :clj/def ?cn]       ; from the selected codename-entity
+   ;[?cq :codeq/code ?def]
+   ;[?def :code/text ?t]
+   ;]
+;)
 
-(println "lf: " lf)
-(println "samples: " (cnt-samples lf 'defn))
+(def uri "datomic:free://localhost:4334/git")
+
+(def conn (d/connect uri))
+
+(def rules
+ '[[(node-files ?n ?f) [?n :node/object ?f] [?f :git/type :blob]]
+   [(node-files ?n ?f) [?n :node/object ?t] [?t :git/type :tree]
+                       [?t :tree/nodes ?n2] (node-files ?n2 ?f)]
+   [(object-nodes ?o ?n) [?n :node/object ?o]]
+   [(object-nodes ?o ?n) [?n2 :node/object ?o] [?t :tree/nodes ?n2] (object-nodes ?t ?n)]
+   [(commit-files ?c ?f) [?c :commit/tree ?root] (node-files ?root ?f)]
+   [(commit-codeqs ?c ?cq) (commit-files ?c ?f) [?cq :codeq/file ?f]]
+   [(file-commits ?f ?c) (object-nodes ?f ?n) [?c :commit/tree ?n]]
+   [(codeq-commits ?cq ?c) [?cq :codeq/file ?f] (file-commits ?f ?c)]])
+
+(println "Go go go!")
+
+(defn go[]
+  (q '[:find ?src (min ?date)
+       :in $ % ?name
+       :where
+       [?n :code/name ?name]
+       [?cq :clj/def ?n]
+       [?cq :codeq/code ?cs]
+       [?cs :code/text ?src]
+       [?cq :codeq/file ?f]
+       (file-commits ?f ?c)
+       (?c :commit/authoredAt ?date)
+       ]
+     (db conn) rules
+     "zark.core/z"))
+
+(go)
 

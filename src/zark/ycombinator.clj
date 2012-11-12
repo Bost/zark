@@ -1,3 +1,5 @@
+(ns zark.ycombinator)
+
 "Print evaluated expression and return its res"
 (defmacro dbg[x]
   `(let [x# ~x]

@@ -23,7 +23,7 @@ monadic-value
 (m-bind (m-result 4) increase)
 
 ;; don't do this:
-;(def bad-fn 
+;(def bad-fn
   ;(compose [half-double increase]))
 
 ;; insead do following:
