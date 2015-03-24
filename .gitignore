@@ -1,11 +1,16 @@
+pom.xml
+*jar
+/lib/
+/classes/
+/out/
+/target/
+.lein-deps-sum
+.lein-repl-history
+.lein-plugins/
+.nrepl-port
+
+
+.repl-*/
+
+# editor backup files
 *~
-*.jar
-*.swp
-/pom.xml
-/bin
-/lib
-/classes
-/native
-/.lein-failures
-/checkouts
-/.lein-deps-sum
