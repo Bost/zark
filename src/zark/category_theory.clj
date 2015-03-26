@@ -49,6 +49,13 @@
 ;; (def gfColl (cTypeOf IPersistentCollection))
 (def cColl (cTypeOf clojure.lang.IPersistentCollection))
 
+;; (defn cCollOf
+;;   "javascript: return arr(a).map(c);"
+;;   [contract]
+;;   (fn [coll]
+;;     (let [realColl (cColl coll)] ; make sure coll is a collection
+;;       #(map contract realColl))))
+
 ;;;;;;;;;;;;;;;;;;;;
 
 (defn gfRepeat
