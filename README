@@ -1,6 +1,6 @@
 # zark
 
-FIXME: write description
+Mighty ZarkOne!
 
 ## Usage
 
@@ -12,6 +12,6 @@ bin/rest 8080 free datomic:free://localhost:4334/
 
 ## License
 
-Copyright (C) 2012 FIXME
+Copyright (C) 2012,2015 FIXME
 
 Distributed under the Eclipse Public License, the same as Clojure.
