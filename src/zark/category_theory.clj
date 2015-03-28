@@ -1,7 +1,8 @@
 (ns zark.category-theory)
 
 (defn cStr
-  "Contract for string objects in memory; a Category Theory object"
+  "Contract for java.lang.String objects in memory.
+  A morphish creating a Category Theory object"
   [s]
   (if (instance? java.lang.String s)
     s
@@ -9,12 +10,14 @@
             (str "(instance? java.lang.String " s ") is false)")))))
 
 (defn cAny
-  "c - contract; a Category Theory object"
+  "Contract for any object in memory.
+  A morphish creating a Category Theory object"
   [x]
   x)
 
 (defn cNum
-  "Contract for number objects in memory; a Category Theory object"
+  "Contract for java.lang.Number objects in memory.
+  A morphish creating a Category Theory object"
   [n]
   (if (instance? java.lang.Number n)
     n
@@ -22,7 +25,8 @@
             (str "(instance? java.lang.Number " n ") is false")))))
 
 (defn cClass
-  ;; "Contract for class names; against objects in memory ; a Category Theory object"
+  "Contract for java.lang.Class objects in memory.
+  A morphish creating a Category Theory object"
   [c]
   (if (instance? java.lang.Class c)
     c
@@ -30,15 +34,20 @@
             (str "(instance? java.lang.Class " c ") is false")))))
 
 (defn typeOf
-  "Create contract for objects in memory; a Category Theory object
-  pType must be an instance of a java.lang.Class"
+  "Create contracts for java.lang.Class objects in memory;
+  A parametrized morphish creating Category Theory objects.
+  pType must be an instance of java.lang.Class"
   [pType]
   (let [cpType (cClass pType)]
     (fn [p]
       (if (instance? cpType p)
         p
         (throw (Exception.
-                (str "Expecting (instance? " cpType " " p ")")))))))
+                (str "Expression is false: (instance? " (.getName cpType) " "
+                     (if (instance? String p)
+                       (str "\"" p "\"")
+                       p)
+                       ")")))))))
 
 (def cBool (typeOf Boolean))
 (def cObj (typeOf Object))
@@ -49,12 +58,16 @@
 ;; (def gfColl (cTypeOf IPersistentCollection))
 (def cColl (typeOf clojure.lang.IPersistentCollection))
 
-;; (defn cCollOf
-;;   "javascript: return arr(a).map(c);"
-;;   [contract]
-;;   (fn [coll]
-;;     (let [realColl (cColl coll)] ; make sure coll is a collection
-;;       #(map contract realColl))))
+(defn cCollOf
+  "Creates a contract for clojure.lang.IPersistentCollection object in memory.
+  A functor. Takes a morphism (contract) and creates a new morphism (contract).
+  pColl must be an instance of clojure.lang.IPersistentCollection"
+  [contract]
+  (fn [pColl]
+    (let [realColl (cColl pColl)] ; make sure coll is a collection
+      (doseq [elem realColl]
+        (contract elem))         ; make sure every elem fullfils contract
+      pColl)))
 
 ;;;;;;;;;;;;;;;;;;;;
 
