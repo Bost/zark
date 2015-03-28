@@ -34,6 +34,12 @@
     (throw (Exception.
             (str "(instance? java.lang.Class " c ") is false")))))
 
+(defn encode [p]
+  (cond
+    (nil? p) "nil"
+    (instance? String p) (str "\"" p "\"")
+    :else p))
+
 (defn typeOf
   "Create contracts for java.lang.Class objects in memory;
   A parametrized morphish creating Category Theory objects.
@@ -44,11 +50,9 @@
       (if (instance? cpType p)
         p
         (throw (Exception.
-                (str "Expression is false: (instance? " (.getName cpType) " "
-                     (if (instance? String p)
-                       (str "\"" p "\"")
-                       p)
-                       ")")))))))
+                (str "Expression is false: (instance? "
+                     (.getName cpType)
+                     " " (encode p) ")")))))))
 
 (def cBool (typeOf Boolean))
 (def cObj (typeOf Object))
