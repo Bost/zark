@@ -2,22 +2,25 @@
   (:require [clojure.test :refer :all]
             [zark.category-theory :refer :all]))
 
-(deftest test-basic-contracts
-  (testing "Contract for strings, numbers, booleans"
-    ;; (is true (cBool true))
+(deftest test-contract-basic
+  (testing "Contract for Strings, Numbers, Booleans"
     (is (= true (cBool true)))
     (is (= false (cBool false)))
     (is (not= true (cBool false)))
+    (is (not= "" (cBool false)))
+    (is (not= 1 (cBool true)))
     (is (= "" (cStr "")))
     (is (not= "a" (cStr "b")))
     (is (= 0 (cNum 0)))
     (is (not= 0 (cNum 1)))
+    (is (thrown? Exception (cBool 1)))
+    (is (thrown? Exception (cBool "foo")))
+    (is (thrown? Exception (cBool 'Uhu))) ; There is no class called Uhu
     (is (thrown? Exception (cStr 1)))
     (is (thrown? Exception (cNum "")))
-    ;; (is "" (cBool false))
-    ))
+    (is (thrown? Exception (cNum false)))))
 
-(deftest test-class-contract
+(deftest test-contract-Class
   (testing "Contract Classes"
     (is (= java.lang.Class (cClass java.lang.Class)))
     (is (not= Object (cClass java.lang.Class)))
@@ -32,9 +35,8 @@
     (is (not= Number
         (cClass clojure.lang.IPersistentCollection)))
     (is (thrown? Exception (cClass 1)))
-    (is (thrown? Exception (cClass 'Foo))) ; There's no class called Foo
-    (is (thrown? Exception (cClass "")))
-    ))
+    (is (thrown? Exception (cClass 'Foo))) ; There is no class called Foo
+    (is (thrown? Exception (cClass "")))))
 
 (deftest test-contract-creator-typeOf
   (testing
@@ -50,10 +52,9 @@
         (typeOf clojure.lang.IPersistentCollection))
     (is (thrown? Exception (typeOf "Uhu")))
     (is (thrown? Exception (typeOf 'Uhu)))
-    (is (thrown? Exception (typeOf `Uhu)))
-    ))
+    (is (thrown? Exception (typeOf `Uhu)))))
 
-(deftest test-cColl
+(deftest test-contract-cColl
   (testing ""
     (let [cColl (typeOf clojure.lang.IPersistentCollection)]
       (is [] (cColl []))
@@ -64,13 +65,24 @@
       (is () (cColl ()))
       (is #{} (cColl #{}))
       (is (thrown? Exception (cColl "[1 2 3]")))
-      (is (thrown? Exception (cColl 1)))
-      )))
+      (is (thrown? Exception (cColl 1))))))
 
-(deftest test-cCollOf
+(deftest test-contract-cCollOf
   (testing "Collection of Strings"
     (let [cCollStr (cCollOf cStr)]
-      (is  ["a" "1" "b"] (cCollStr ["a" "1" "b"]))
-      (is  ["a" "1" "b"] (cCollStr ["a" "1" "b"]))
-      (is (thrown? Exception (cCollStr ["a" 1 "b"])))
-      )))
+      (is (= ["a" "1" "b"] (cCollStr ["a" "1" "b"])))
+      (is (not= ["b" "2" "d"] (cCollStr ["a" "1" "b"])))
+      (is (thrown? Exception (cCollStr ["a" nil])))
+      (is (thrown? Exception (cCollStr ["a" 1])))))
+  (testing "Collection of Numbers"
+    (let [cCollNum (cCollOf cNum)]
+      (is (= [1 2 3] (cCollNum [1 2 3])))
+      (is (not= [4 5 6] (cCollNum [1 2 3])))
+      (is (thrown? Exception (cCollNum [1 nil])))
+      (is (thrown? Exception (cCollNum ["a" 1])))))
+  (testing "Collection of Booleans"
+    (let [cCollBool (cCollOf cBool)]
+      (is (= [true false] (cCollBool [true false])))
+      (is (not= [true true] (cCollBool [true false])))
+      (is (thrown? Exception (cCollBool [nil nil])))
+      (is (thrown? Exception (cCollBool ["a" 1]))))))
