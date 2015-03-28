@@ -86,3 +86,14 @@
       (is (not= [true true] (cCollBool [true false])))
       (is (thrown? Exception (cCollBool [nil nil])))
       (is (thrown? Exception (cCollBool ["a" 1]))))))
+
+(deftest test-contract-cCollOf
+  (testing "Collection of values accepted by guarded fn"
+    (let [cGfRepeat (cCollOf gfRepeat)]
+      (is (= ["aa" "11" "bb"] (cGfRepeat ["a" "1" "b"])))
+      (is (= ["aa" "11" "bb"] (cGfRepeat '["a" "1" "b"])))
+      (is (= ["aa" "11" "bb"] (cGfRepeat ['"a" '"1" '"b"])))
+      (is (not= ["a" "1" "b"] (cGfRepeat ["a" "1" "b"])))
+      (is (thrown? Exception (cGfRepeat [1 2])))
+      (is (thrown? Exception (cGfRepeat ['a "a"])))
+      (is (thrown? Exception (cGfRepeat ['1 "a"]))))))
