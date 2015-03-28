@@ -7,6 +7,7 @@
                  [com.datomic/datomic-free "0.9.5153" :exclusions [joda-time]]
                  ]
   :plugins [
+            [lein-cljfmt "0.1.9"]
             [cider/cider-nrepl "0.9.0-SNAPSHOT"]
             [refactor-nrepl "0.3.0-SNAPSHOT"]
             ]

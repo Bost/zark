@@ -47,7 +47,7 @@
 
 ;; Compile error: Unable to resolve symbol: IPersistentCollection in this context
 ;; (def gfColl (cTypeOf IPersistentCollection))
-(def cColl (cTypeOf clojure.lang.IPersistentCollection))
+(def cColl (typeOf clojure.lang.IPersistentCollection))
 
 ;; (defn cCollOf
 ;;   "javascript: return arr(a).map(c);"
