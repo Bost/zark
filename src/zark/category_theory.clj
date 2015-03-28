@@ -72,9 +72,9 @@
   [contract]
   (fn [pColl]
     (let [realColl (cColl pColl)] ; make sure coll is a collection
-      (doseq [elem realColl]
-        (contract elem))         ; make sure every elem fullfils contract
-      pColl)))
+      (into (empty realColl)
+            ;; make sure every elem fullfills contract
+            (map contract realColl)))))
 
 ;;;;;;;;;;;;;;;;;;;;
 
