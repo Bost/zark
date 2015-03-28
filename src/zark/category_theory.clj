@@ -11,7 +11,8 @@
 
 (defn cAny
   "Contract for any object in memory.
-  A morphish creating a Category Theory object"
+  A morphish creating a Category Theory object
+  TODO create tests for cAny"
   [x]
   x)
 
@@ -60,8 +61,10 @@
 
 (defn cCollOf
   "Creates a contract for clojure.lang.IPersistentCollection object in memory.
-  A functor. Takes a morphism (contract) and creates a new morphism (contract).
-  pColl must be an instance of clojure.lang.IPersistentCollection"
+  A functor. Takes a morphis (guarded fn) / CT object (contract) and creates
+  a new morphis (guarded fn) / CT object (contract).
+  pColl must be an instance of clojure.lang.IPersistentCollection
+  TODO create tests for cCollOf working with morphisms (guarded fns)"
   [contract]
   (fn [pColl]
     (let [realColl (cColl pColl)] ; make sure coll is a collection
