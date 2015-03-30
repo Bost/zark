@@ -101,7 +101,8 @@
   (valx [_] x))
 
 (defn maybe
-  "functor"
+  "functor. Can be used as an alternative to throwing an exception.
+  No need to wrap everything in an try-catch block."
   [c]
   (fn [m]
     (cond

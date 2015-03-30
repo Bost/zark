@@ -1,6 +1,10 @@
 (ns zark.category-theory-test
   (:require [clojure.test :refer :all]
-            [zark.category-theory :refer :all]))
+            [zark.category-theory :refer :all])
+  ;; `defprotocol` creates a real Var, which you can `use` or `refer` just like a function.
+  ;; `deftype` and `defrecord` both create classes, which you must `import` using the class name.
+  ;; Class names have to be compatible with Java, so dashes are converted to underscores.
+  (:import [zark.category_theory None Some]))
 
 (deftest test-contract-basic
   (testing "Contract for Strings, Numbers, Booleans"
@@ -97,3 +101,16 @@
       (is (thrown? Exception (cGfRepeat [1 2])))
       (is (thrown? Exception (cGfRepeat ['a "a"])))
       (is (thrown? Exception (cGfRepeat ['1 "a"]))))))
+
+(deftest test-maybe
+  (testing ""
+    (is "None" (cstr (None.)))
+    (is "Some" (cstr (Some. "")))
+    (is "Some 1" (cstr (Some. 1)))
+    (is "Some []" (cstr (Some. [])))
+    (is "Some val" (cstr (Some. "val")))
+    (is (cstr (None.)) (cstr ((maybe gfRepeat) (None.))))
+    (is (gfRepeat "val") (cstr ((maybe gfRepeat) (Some. "val"))))
+    (is (thrown? Exception (cstr ((maybe gfRepeat) (Some. 1)))))
+    (is (thrown? Exception (cstr ((maybe gfRepeat) (Some. [])))))
+    ))
