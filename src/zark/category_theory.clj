@@ -88,37 +88,27 @@
 
 (defprotocol Maybe
   (cstr [_])
-  (maybe [c]))
+  (valx [_]))
 
 (deftype None []
   Maybe
   (cstr [_] "None")
-  (maybe [c] (fn [m] m)))
+  (valx [_] nil))
 
 (deftype Some [x]
   Maybe
   (cstr [_] (str "Some " x))
-  (maybe [c] (fn [m]
-               (Some. (c m))
-               )))
+  (valx [_] x))
 
-
-(defprotocol P
-  (foo [x])
-  (bar-me [x] [x y]))
-
-(deftype Foo [a b c]
-  P
-  (foo [x] a)
-  (bar-me [x] b)
-  (bar-me [x y] (+ c y)))
-
-(bar-me (Foo. 1 2 3) 42)
-;; => 45
-
-(foo
- (let [x 42]
-   (reify P
-     (foo [this] 17)
-     (bar-me [this] x)
-     (bar-me [this y] x))))
+(defn maybe
+  "functor"
+  [c]
+  (fn [m]
+    (cond
+      (instance? None m) m
+      (instance? Some m) (Some. (c (valx m)))
+      :else (throw (Exception.
+                    (str "Expression is false: "
+                         "(or (instance? (None.) " (encode m) ")"
+                         " (instance? (Some. \"\") " (encode m) "))")))
+      )))
