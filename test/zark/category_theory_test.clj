@@ -103,12 +103,23 @@
       (is (thrown? Exception (cGfRepeat ['1 "a"]))))))
 
 (deftest test-maybe
-  (testing ""
+  (testing "TODO separate getOrElse from the rest"
+    (is "None" (cstr (None.)))
     (is "None" (cstr (None.)))
     (is "Some" (cstr (Some. "")))
     (is "Some 1" (cstr (Some. 1)))
     (is "Some []" (cstr (Some. [])))
     (is "Some val" (cstr (Some. "val")))
+
+    (is "jane" (getOrElse (None.) "jane"))
+    (is "joe" (getOrElse (Some. "joe") "jane"))
+
+    (is (getOrElse (None.) "jane")
+        (getOrElse ((maybe gfRepeat) (None.)) "jane"))
+
+    (is ((maybe gfRepeat) (Some. "joe"))
+        (getOrElse ((maybe gfRepeat) (Some. "joe")) "jane"))
+
     (is (cstr (None.)) (cstr ((maybe gfRepeat) (None.))))
     (is (gfRepeat "val") (cstr ((maybe gfRepeat) (Some. "val"))))
     (is (thrown? Exception (cstr ((maybe gfRepeat) (Some. 1)))))

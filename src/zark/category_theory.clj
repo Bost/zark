@@ -88,17 +88,23 @@
 
 (defprotocol Maybe
   (cstr [_])
-  (valx [_]))
+  (valx [_])
+  (getOrElse [obj else-val])
+  )
 
 (deftype None []
   Maybe
   (cstr [_] "None")
-  (valx [_] nil))
+  (valx [_] nil)
+  (getOrElse [obj else-val] else-val)
+  )
 
 (deftype Some [x]
   Maybe
   (cstr [_] (str "Some " x))
-  (valx [_] x))
+  (valx [_] x)
+  (getOrElse [obj else-val] (valx obj))
+  )
 
 (defn maybe
   "functor. Can be used as an alternative to throwing an exception.
