@@ -90,6 +90,7 @@
   (cstr [_])
   (valx [_])
   (getOrElse [obj else-val])
+  (maybe [m c] (throw (Exception. "foo")))
   )
 
 (deftype None []
@@ -97,6 +98,7 @@
   (cstr [_] "None")
   (valx [_] nil)
   (getOrElse [obj else-val] else-val)
+  (maybe [m c] m)
   )
 
 (deftype Some [x]
@@ -104,9 +106,10 @@
   (cstr [_] (str "Some " x))
   (valx [_] x)
   (getOrElse [obj else-val] (valx obj))
+  (maybe [m c] (Some. (c (valx m))))
   )
 
-(defn maybe
+(defn maybe-alternative
   "functor. Can be used as an alternative to throwing an exception.
   No need to wrap everything in an try-catch block."
   [c]
