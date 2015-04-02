@@ -87,17 +87,19 @@
 ;; contracts with functions they guard form a category
 
 (defprotocol Maybe
+  "Protocol for Category Theory Objects"
   (cstr [_])
   (valx [_])
   (getOrElse [obj else-val])
-  (maybe [m c]))
+  (maybe [m] [m c]
+    "Multimethod. m - a monadic value, c - contract. Returns None or Some."))
 
 (deftype None []
   Maybe
   (cstr [_] "None")
   (valx [_] nil)
   (getOrElse [obj else-val] else-val)
-  (maybe [m c] m))
+  (maybe [m] m))
 
 (deftype Some [x]
   Maybe
@@ -107,7 +109,7 @@
   (maybe [m c] (Some. (c (valx m)))))
 
 (defn maybe-alternative
-  "functor. Can be used as an alternative to throwing an exception.
+  "Functor. Can be used as an alternative to throwing an exception.
   No need to wrap everything in an try-catch block."
   [c]
   (fn [m]
@@ -117,5 +119,4 @@
       :else (throw (Exception.
                     (str "Expression is false: "
                          "(or (instance? (None.) " (encode m) ")"
-                         " (instance? (Some. \"\") " (encode m) "))")))
-      )))
+                         " (instance? (Some. \"\") " (encode m) "))"))))))

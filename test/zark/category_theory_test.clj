@@ -102,26 +102,57 @@
       (is (thrown? Exception (cGfRepeat ['a "a"])))
       (is (thrown? Exception (cGfRepeat ['1 "a"]))))))
 
-(deftest test-maybe
-  (testing "TODO separate getOrElse from the rest"
-    (is "None" (cstr (None.)))
+(deftest test-maybe-functor
+  (testing "Test the Maybe protocol and types"
     (is "None" (cstr (None.)))
     (is "Some" (cstr (Some. "")))
     (is "Some 1" (cstr (Some. 1)))
     (is "Some []" (cstr (Some. [])))
-    (is "Some val" (cstr (Some. "val")))
+    (is "Some val" (cstr (Some. "val")))))
 
+(deftest test-getOrElse
+  (testing "Test the getOrElse method"
+    (is (thrown? Exception (getOrElse nil "jane")))
     (is "jane" (getOrElse (None.) "jane"))
-    (is "joe" (getOrElse (Some. "joe") "jane"))
+    (is "joe" (getOrElse (Some. "joe") "jane"))))
 
-    (is (getOrElse (None.) "jane")
-        (getOrElse ((maybe gfRepeat) (None.)) "jane"))
+(deftest test-maybe-alternative
+  (testing "Test: maybe-alternative, contract for collections"
+    (let [cGfRepeat (cCollOf gfRepeat)]
+      (is (thrown? Exception ((maybe-alternative cGfRepeat) ["1" "2"])))
+      (is (thrown? Exception ((maybe-alternative cGfRepeat) [(None.)])))
+      (is (thrown? Exception ((maybe-alternative cGfRepeat) [(Some. "jim")])))
+      (is (thrown? Exception ((maybe-alternative cGfRepeat) (Some. "jim"))))
+      (is (thrown? Exception ((maybe-alternative cGfRepeat) (Some. ["jim" 1]))))
 
-    (is ((maybe gfRepeat) (Some. "joe"))
-        (getOrElse ((maybe gfRepeat) (Some. "joe")) "jane"))
+      (is (= (Some. ["jimjim" "jackjack"])
+             ((maybe-alternative cGfRepeat) (Some. ["jim" "jack"]))))
+      (is (= (Some. [(gfRepeat "jim") (gfRepeat "jack")])
+             ((maybe-alternative cGfRepeat) (Some. ["jim" "jack"])))))))
 
-    (is (cstr (None.)) (cstr ((maybe gfRepeat) (None.))))
-    (is (gfRepeat "val") (cstr ((maybe gfRepeat) (Some. "val"))))
-    (is (thrown? Exception (cstr ((maybe gfRepeat) (Some. 1)))))
-    (is (thrown? Exception (cstr ((maybe gfRepeat) (Some. [])))))
-    ))
+(deftest test-maybe-alternative
+  (testing "TODO Test: maybe-alternative, getOrElse"
+    (let [cGfRepeat (cCollOf gfRepeat)]
+      (is (= [(gfRepeat "jim") (gfRepeat "jack")]
+             (getOrElse ((maybe-alternative cGfRepeat) (Some. ["jim" "jack"]))
+                        "jane"))))))
+
+(deftest test-protocol-Maybe-with-getOrElse
+  (testing "TODO Test: maybe of the Maybe protocol, getOrElse"
+    ;;> (= (java.lang.Object.) (java.lang.Object.))
+    ;; => false
+    (is (= (cstr (maybe (Some. "jim") gfRepeat))
+           (cstr ((maybe-alternative gfRepeat) (Some. "jim")))
+           (cstr (Some. "jimjim"))))))
+
+(deftest test-all
+  (testing "Test: maybe-alternative, contract for collections, getOrElse"
+    (let [cGfRepeat (cCollOf gfRepeat)]
+      (is (= (getOrElse (None.) "jane")
+             (getOrElse ((maybe-alternative cGfRepeat) (None.)) "jane")))
+      (is (= (cstr (Some. ["jimjim" "jackjack"]))
+             (cstr (maybe (Some. ["jim" "jack"]) cGfRepeat))
+             (cstr (Some. [(gfRepeat "jim") (gfRepeat "jack")]))))
+
+      (is (not= 1
+                (cstr (maybe (Some. ["jim" "jack"]) cGfRepeat)))))))
