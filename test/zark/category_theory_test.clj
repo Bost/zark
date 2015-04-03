@@ -8,99 +8,99 @@
 
 (deftest test-contract-basic
   (testing "Contract for Strings, Numbers, Booleans"
-    (is (= true (cBool true)))
-    (is (= false (cBool false)))
-    (is (not= true (cBool false)))
-    (is (not= "" (cBool false)))
-    (is (not= 1 (cBool true)))
-    (is (= "" (cStr "")))
-    (is (not= "a" (cStr "b")))
-    (is (= 0 (cNum 0)))
-    (is (not= 0 (cNum 1)))
-    (is (thrown? Exception (cBool 1)))
-    (is (thrown? Exception (cBool "foo")))
-    (is (thrown? Exception (cBool 'Uhu))) ; There is no class called Uhu
-    (is (thrown? Exception (cStr 1)))
-    (is (thrown? Exception (cNum "")))
-    (is (thrown? Exception (cNum false)))))
+    (is (= true (c-bool true)))
+    (is (= false (c-bool false)))
+    (is (not= true (c-bool false)))
+    (is (not= "" (c-bool false)))
+    (is (not= 1 (c-bool true)))
+    (is (= "" (c-str "")))
+    (is (not= "a" (c-str "b")))
+    (is (= 0 (c-num 0)))
+    (is (not= 0 (c-num 1)))
+    (is (thrown? Exception (c-bool 1)))
+    (is (thrown? Exception (c-bool "foo")))
+    (is (thrown? Exception (c-bool 'Uhu))) ; There is no class called Uhu
+    (is (thrown? Exception (c-str 1)))
+    (is (thrown? Exception (c-num "")))
+    (is (thrown? Exception (c-num false)))))
 
 (deftest test-contract-Class
   (testing "Contract Classes"
-    (is (= java.lang.Class (cClass java.lang.Class)))
-    (is (not= Object (cClass java.lang.Class)))
-    (is (= Boolean (cClass Boolean)))
-    (is (= Number (cClass Number)))
-    (is (not= Number (cClass Boolean)))
-    (is (= String (cClass String)))
-    (is (= Object (cClass Object)))
-    (is (not= Object (cClass String)))
+    (is (= java.lang.Class (c-class java.lang.Class)))
+    (is (not= Object (c-class java.lang.Class)))
+    (is (= Boolean (c-class Boolean)))
+    (is (= Number (c-class Number)))
+    (is (not= Number (c-class Boolean)))
+    (is (= String (c-class String)))
+    (is (= Object (c-class Object)))
+    (is (not= Object (c-class String)))
     (is (= clojure.lang.IPersistentCollection
-        (cClass clojure.lang.IPersistentCollection)))
+        (c-class clojure.lang.IPersistentCollection)))
     (is (not= Number
-        (cClass clojure.lang.IPersistentCollection)))
-    (is (thrown? Exception (cClass 1)))
-    (is (thrown? Exception (cClass 'Foo))) ; There is no class called Foo
-    (is (thrown? Exception (cClass "")))))
+        (c-class clojure.lang.IPersistentCollection)))
+    (is (thrown? Exception (c-class 1)))
+    (is (thrown? Exception (c-class 'Foo))) ; There is no class called Foo
+    (is (thrown? Exception (c-class "")))))
 
-(deftest test-contract-creator-typeOf
+(deftest test-contract-creator-type-of
   (testing
-      (str "Test if contracts created by the typeOf(T) are"
+      (str "Test if contracts created by the type-of(T) are"
            "contract for classes of type T")
-    (is (= (cBool true) ((typeOf Boolean) true)))
-    (is (= (cBool false) ((typeOf Boolean) false)))
-    (is (= (cNum 0) ((typeOf Number) 0)))
-    (is (= (cStr "uhu") ((typeOf String) "uhu")))
-    (is (= (cClass String) ((typeOf java.lang.Class) String)))
-    (is (cClass Object) (typeOf Object))
-    (is (cClass clojure.lang.IPersistentCollection)
-        (typeOf clojure.lang.IPersistentCollection))
-    (is (thrown? Exception (typeOf "Uhu")))
-    (is (thrown? Exception (typeOf 'Uhu)))
-    (is (thrown? Exception (typeOf `Uhu)))))
+    (is (= (c-bool true) ((type-of Boolean) true)))
+    (is (= (c-bool false) ((type-of Boolean) false)))
+    (is (= (c-num 0) ((type-of Number) 0)))
+    (is (= (c-str "uhu") ((type-of String) "uhu")))
+    (is (= (c-class String) ((type-of java.lang.Class) String)))
+    (is (c-class Object) (type-of Object))
+    (is (c-class clojure.lang.IPersistentCollection)
+        (type-of clojure.lang.IPersistentCollection))
+    (is (thrown? Exception (type-of "Uhu")))
+    (is (thrown? Exception (type-of 'Uhu)))
+    (is (thrown? Exception (type-of `Uhu)))))
 
-(deftest test-contract-cColl
+(deftest test-contract-c-coll
   (testing ""
-    (let [cColl (typeOf clojure.lang.IPersistentCollection)]
-      (is [] (cColl []))
-      (is [1 2 3] (cColl [1 2 3]))
-      (is '[1 2 3] (cColl '[1 2 3]))
-      (is `[1 2 3] (cColl `[1 2 3]))
-      (is {} (cColl {}))
-      (is () (cColl ()))
-      (is #{} (cColl #{}))
-      (is (thrown? Exception (cColl "[1 2 3]")))
-      (is (thrown? Exception (cColl 1))))))
+    (let [c-coll (type-of clojure.lang.IPersistentCollection)]
+      (is [] (c-coll []))
+      (is [1 2 3] (c-coll [1 2 3]))
+      (is '[1 2 3] (c-coll '[1 2 3]))
+      (is `[1 2 3] (c-coll `[1 2 3]))
+      (is {} (c-coll {}))
+      (is () (c-coll ()))
+      (is #{} (c-coll #{}))
+      (is (thrown? Exception (c-coll "[1 2 3]")))
+      (is (thrown? Exception (c-coll 1))))))
 
-(deftest test-contract-cCollOf
+(deftest test-contract-c-coll-of
   (testing "Collection of Strings"
-    (let [cCollStr (cCollOf cStr)]
-      (is (= ["a" "1" "b"] (cCollStr ["a" "1" "b"])))
-      (is (not= ["b" "2" "d"] (cCollStr ["a" "1" "b"])))
-      (is (thrown? Exception (cCollStr ["a" nil])))
-      (is (thrown? Exception (cCollStr ["a" 1])))))
+    (let [c-coll-str (c-coll-of c-str)]
+      (is (= ["a" "1" "b"] (c-coll-str ["a" "1" "b"])))
+      (is (not= ["b" "2" "d"] (c-coll-str ["a" "1" "b"])))
+      (is (thrown? Exception (c-coll-str ["a" nil])))
+      (is (thrown? Exception (c-coll-str ["a" 1])))))
   (testing "Collection of Numbers"
-    (let [cCollNum (cCollOf cNum)]
-      (is (= [1 2 3] (cCollNum [1 2 3])))
-      (is (not= [4 5 6] (cCollNum [1 2 3])))
-      (is (thrown? Exception (cCollNum [1 nil])))
-      (is (thrown? Exception (cCollNum ["a" 1])))))
+    (let [c-collNum (c-coll-of c-num)]
+      (is (= [1 2 3] (c-collNum [1 2 3])))
+      (is (not= [4 5 6] (c-collNum [1 2 3])))
+      (is (thrown? Exception (c-collNum [1 nil])))
+      (is (thrown? Exception (c-collNum ["a" 1])))))
   (testing "Collection of Booleans"
-    (let [cCollBool (cCollOf cBool)]
-      (is (= [true false] (cCollBool [true false])))
-      (is (not= [true true] (cCollBool [true false])))
-      (is (thrown? Exception (cCollBool [nil nil])))
-      (is (thrown? Exception (cCollBool ["a" 1]))))))
+    (let [c-collBool (c-coll-of c-bool)]
+      (is (= [true false] (c-collBool [true false])))
+      (is (not= [true true] (c-collBool [true false])))
+      (is (thrown? Exception (c-collBool [nil nil])))
+      (is (thrown? Exception (c-collBool ["a" 1]))))))
 
-(deftest test-contract-cCollOf
+(deftest test-contract-c-coll-of
   (testing "Collection of values accepted by guarded fn"
-    (let [cGfRepeat (cCollOf gfRepeat)]
-      (is (= ["aa" "11" "bb"] (cGfRepeat ["a" "1" "b"])))
-      (is (= ["aa" "11" "bb"] (cGfRepeat '["a" "1" "b"])))
-      (is (= ["aa" "11" "bb"] (cGfRepeat ['"a" '"1" '"b"])))
-      (is (not= ["a" "1" "b"] (cGfRepeat ["a" "1" "b"])))
-      (is (thrown? Exception (cGfRepeat [1 2])))
-      (is (thrown? Exception (cGfRepeat ['a "a"])))
-      (is (thrown? Exception (cGfRepeat ['1 "a"]))))))
+    (let [c-gf-repeat (c-coll-of gf-repeat)]
+      (is (= ["aa" "11" "bb"] (c-gf-repeat ["a" "1" "b"])))
+      (is (= ["aa" "11" "bb"] (c-gf-repeat '["a" "1" "b"])))
+      (is (= ["aa" "11" "bb"] (c-gf-repeat ['"a" '"1" '"b"])))
+      (is (not= ["a" "1" "b"] (c-gf-repeat ["a" "1" "b"])))
+      (is (thrown? Exception (c-gf-repeat [1 2])))
+      (is (thrown? Exception (c-gf-repeat ['a "a"])))
+      (is (thrown? Exception (c-gf-repeat ['1 "a"]))))))
 
 (deftest test-maybe-functor
   (testing "Test the Maybe protocol and types"
@@ -110,49 +110,57 @@
     (is "Some []" (cstr (Some. [])))
     (is "Some val" (cstr (Some. "val")))))
 
-(deftest test-getOrElse
-  (testing "Test the getOrElse method"
-    (is (thrown? Exception (getOrElse nil "jane")))
-    (is "jane" (getOrElse (None.) "jane"))
-    (is "joe" (getOrElse (Some. "joe") "jane"))))
+(deftest test-get-or-else
+  (testing "Test the get-or-else method"
+    (is (thrown? Exception (get-or-else nil "jane")))
+    (is "jane" (get-or-else (None.) "jane"))
+    (is "joe" (get-or-else (Some. "joe") "jane"))))
 
-(deftest test-maybe-alternative
-  (testing "Test: maybe-alternative, contract for collections"
-    (let [cGfRepeat (cCollOf gfRepeat)]
-      (is (thrown? Exception ((maybe-alternative cGfRepeat) ["1" "2"])))
-      (is (thrown? Exception ((maybe-alternative cGfRepeat) [(None.)])))
-      (is (thrown? Exception ((maybe-alternative cGfRepeat) [(Some. "jim")])))
-      (is (thrown? Exception ((maybe-alternative cGfRepeat) (Some. "jim"))))
-      (is (thrown? Exception ((maybe-alternative cGfRepeat) (Some. ["jim" 1]))))
+(deftest test-maybe-alt
+  (testing "Test: maybe-alt, contract for collections"
+    (let [c-gf-repeat (c-coll-of gf-repeat)]
+      (is (thrown? Exception ((maybe-alt c-gf-repeat) ["1" "2"])))
+      (is (thrown? Exception ((maybe-alt c-gf-repeat) [(None.)])))
+      (is (thrown? Exception ((maybe-alt c-gf-repeat) [(Some. "jim")])))
+      (is (thrown? Exception ((maybe-alt c-gf-repeat) (Some. "jim"))))
+      (is (thrown? Exception ((maybe-alt c-gf-repeat) (Some. ["jim" 1]))))
 
       (is (= (Some. ["jimjim" "jackjack"])
-             ((maybe-alternative cGfRepeat) (Some. ["jim" "jack"]))))
-      (is (= (Some. [(gfRepeat "jim") (gfRepeat "jack")])
-             ((maybe-alternative cGfRepeat) (Some. ["jim" "jack"])))))))
+             ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"]))))
+      (is (= (Some. [(gf-repeat "jim") (gf-repeat "jack")])
+             ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"])))))))
 
-(deftest test-maybe-alternative
-  (testing "TODO Test: maybe-alternative, getOrElse"
-    (let [cGfRepeat (cCollOf gfRepeat)]
-      (is (= [(gfRepeat "jim") (gfRepeat "jack")]
-             (getOrElse ((maybe-alternative cGfRepeat) (Some. ["jim" "jack"]))
+(deftest test-maybe-alt
+  (testing "TODO Test: maybe-alt, get-or-else"
+    (let [c-gf-repeat (c-coll-of gf-repeat)]
+      (is (= [(gf-repeat "jim") (gf-repeat "jack")]
+             (get-or-else ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"]))
                         "jane"))))))
 
-(deftest test-protocol-Maybe-with-getOrElse
-  (testing "TODO Test: maybe of the Maybe protocol, getOrElse"
+(deftest test-protocol-Maybe-with-get-or-else
+  (testing "TODO Test: maybe of the Maybe protocol, get-or-else"
     ;;> (= (java.lang.Object.) (java.lang.Object.))
     ;; => false
-    (is (= (cstr (maybe (Some. "jim") gfRepeat))
-           (cstr ((maybe-alternative gfRepeat) (Some. "jim")))
+    (is (= (cstr (maybe (Some. "jim") gf-repeat))
+           (cstr ((maybe-alt gf-repeat) (Some. "jim")))
            (cstr (Some. "jimjim"))))))
 
 (deftest test-all
-  (testing "Test: maybe-alternative, contract for collections, getOrElse"
-    (let [cGfRepeat (cCollOf gfRepeat)]
-      (is (= (getOrElse (None.) "jane")
-             (getOrElse ((maybe-alternative cGfRepeat) (None.)) "jane")))
+  (testing "Test: maybe-alt, contract for collections, get-or-else"
+    (let [c-gf-repeat (c-coll-of gf-repeat)]
+      (is (= (get-or-else (None.) "jane")
+             (get-or-else ((maybe-alt c-gf-repeat) (None.)) "jane")))
       (is (= (cstr (Some. ["jimjim" "jackjack"]))
-             (cstr (maybe (Some. ["jim" "jack"]) cGfRepeat))
-             (cstr (Some. [(gfRepeat "jim") (gfRepeat "jack")]))))
+             (cstr (maybe (Some. ["jim" "jack"]) c-gf-repeat))
+             (cstr (Some. [(gf-repeat "jim") (gf-repeat "jack")]))))
 
       (is (not= 1
-                (cstr (maybe (Some. ["jim" "jack"]) cGfRepeat)))))))
+                (cstr (maybe (Some. ["jim" "jack"]) c-gf-repeat)))))))
+
+(deftest test-x
+  (testing "flatten"
+    (is (= [[1 2 3] [4 5]]
+           ((c-coll-of (c-coll-of c-any)) [[1 2 3] [4 5]])))
+    (is (= [1 2 3 4 5]
+           ((coll-ofFlatten c-any) [[1 2 3] [4 5]])))
+    ))

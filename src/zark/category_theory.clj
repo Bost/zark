@@ -1,6 +1,6 @@
 (ns zark.category-theory)
 
-(defn cStr
+(defn c-str
   "Contract for java.lang.String objects in memory.
   A morphish creating a Category Theory object"
   [s]
@@ -9,14 +9,14 @@
     (throw (Exception.
             (str "(instance? java.lang.String " s ") is false)")))))
 
-(defn cAny
+(defn c-any
   "Contract for any object in memory.
   A morphish creating a Category Theory object
-  TODO create tests for cAny"
+  TODO create tests for c-any"
   [x]
   x)
 
-(defn cNum
+(defn c-num
   "Contract for java.lang.Number objects in memory.
   A morphish creating a Category Theory object"
   [n]
@@ -25,7 +25,7 @@
     (throw (Exception.
             (str "(instance? java.lang.Number " n ") is false")))))
 
-(defn cClass
+(defn c-class
   "Contract for java.lang.Class objects in memory.
   A morphish creating a Category Theory object"
   [c]
@@ -40,47 +40,47 @@
     (instance? String p) (str "\"" p "\"")
     :else p))
 
-(defn typeOf
+(defn type-of
   "Create contracts for java.lang.Class objects in memory;
   A parametrized morphish creating Category Theory objects.
-  pType must be an instance of java.lang.Class"
-  [pType]
-  (let [cpType (cClass pType)]
+  p-type must be an instance of java.lang.Class"
+  [p-type]
+  (let [cp-type (c-class p-type)]
     (fn [p]
-      (if (instance? cpType p)
+      (if (instance? cp-type p)
         p
         (throw (Exception.
                 (str "Expression is false: (instance? "
-                     (.getName cpType)
+                     (.getName cp-type)
                      " " (encode p) ")")))))))
 
-(def cBool (typeOf Boolean))
-(def cObj (typeOf Object))
-(def cNum (typeOf Number))
-(def cStr (typeOf String))
+(def c-bool (type-of Boolean))
+(def c-objm (type-of Object))
+(def c-num (type-of Number))
+(def c-str (type-of String))
 
 ;; Compile error: Unable to resolve symbol: IPersistentCollection in this context
 ;; (def gfColl (cTypeOf IPersistentCollection))
-(def cColl (typeOf clojure.lang.IPersistentCollection))
+(def c-coll (type-of clojure.lang.IPersistentCollection))
 
-(defn cCollOf
+(defn c-coll-of
   "Creates a contract for clojure.lang.IPersistentCollection object in memory.
   A functor. Takes a morphis (guarded fn) / CT object (contract) and creates
   a new morphis (guarded fn) / CT object (contract).
-  pColl must be an instance of clojure.lang.IPersistentCollection"
+  p-coll must be an instance of clojure.lang.IPersistentCollection"
   [contract]
-  (fn [pColl]
-    (let [realColl (cColl pColl)] ; make sure coll is a collection
-      (into (empty realColl)
+  (fn [p-coll]
+    (let [real-coll (c-coll p-coll)] ; make sure coll is a collection
+      (into (empty real-coll)
             ;; make sure every elem fullfills contract
-            (map contract realColl)))))
+            (map contract real-coll)))))
 
 ;;;;;;;;;;;;;;;;;;;;
 
-(defn gfRepeat
+(defn gf-repeat
   "gf - guarded function; a Morphish"
   [s]
-  (let [cs (cStr s)] ;; cs - checked s
+  (let [cs (c-str s)] ;; cs - checked s
     (str cs cs)))
 
 ;; contracts with functions they guard form a category
@@ -89,7 +89,7 @@
   "Protocol for Category Theory Objects"
   (cstr [_])
   (valx [_])
-  (getOrElse [obj else-val])
+  (get-or-else [obj else-val])
   (maybe [m] [m c]
     "Multimethod. m - a monadic value, c - contract. Returns None or Some."))
 
@@ -97,17 +97,17 @@
   Maybe
   (cstr [_] "None")
   (valx [_] nil)
-  (getOrElse [obj else-val] else-val)
+  (get-or-else [obj else-val] else-val)
   (maybe [m] m))
 
 (deftype Some [x]
   Maybe
   (cstr [_] (str "Some " x))
   (valx [_] x)
-  (getOrElse [obj else-val] (valx obj))
+  (get-or-else [obj else-val] (valx obj))
   (maybe [m c] (Some. (c (valx m)))))
 
-(defn maybe-alternative
+(defn maybe-alt
   "Functor. Can be used as an alternative to throwing an exception.
   No need to wrap everything in an try-catch block."
   [c]
@@ -131,19 +131,19 @@
   (fn [c]
     (functor c)))
 
-(defn noTimes [functor]
+(defn notimes [functor]
   (fn [c]
     c))
 
-(defn collOfUnit [c]
+(defn coll-ofUnit [c]
   (fn [x]
-    (let [cx (((noTimes cCollOf) c) x)]        ; input passes the guard c
-      (((once cCollOf) c) [cx]))))  ; output passses the guard (cColl c)
+    (let [cx (((notimes c-coll-of) c) x)]        ; input passes the guard c
+      (((once c-coll-of) c) [cx]))))  ; output passses the guard (c-coll c)
 
 (defn maybeUnit-alt [c]
   (fn [x]
-    (let [cx ((noTimes cCollOf) (c x))]        ; input passes the guard c
-      ((maybe-alternative c) (Some. cx)))))
+    (let [cx (((notimes maybe-alt) c) x)]
+      ((maybe-alt c) (Some. cx)))))
 
 (defn maybeUnit [c]
   (fn [x]
@@ -152,22 +152,22 @@
 
 ;; TODO maybe
 
-(defn collOfFlatten [c]
+(defn coll-ofFlatten [c]
   (fn [aax]
     ;; input [[1 2 3] [4 5]] passes the guard c
-    (let [caax ((cCollOf (cCollOf c)) aax)]
-      ((cCollOf c)
+    (let [caax ((c-coll-of (c-coll-of c)) aax)]
+      ((c-coll-of c)
        ;; from decrease the vector dimenssion by 1
        (apply into caax)))))
 
 (defn maybeFlatten-alt [c]
   (fn [mmx]
-    (let [cmmx ((maybe-alternative (maybe-alternative c)) mmx)]
+    (let [cmmx ((maybe-alt (maybe-alt c)) mmx)]
       (let [r (cond
                 (instance? Some mmx) (valx mmx)
               ;; (instance? None m) mmx ; not needed
               )]
-        ((maybe-alternative c) r)))))
+        ((maybe-alt c) r)))))
 
 (defn maybeFlatten [c]
   (fn [mmx]
