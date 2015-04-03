@@ -162,19 +162,44 @@
                          "(or (instance? (None.) " (encode m) ")"
                          " (instance? (Some. \"\") " (encode m) "))"))))))
 
-(defn maybe-unit [c]
-  (fn [x]
-    ;; check if input passed the contract c
-    (let [c-x ((notimes-fn maybe) x c)]
-      (maybe (Some. x) c-x))))
+(defn twice [functor]
+  (fn [c]
+    ((functor (functor c)))))
+
+(defn once [functor]
+  functor)
+
+(defn once-alt [functor]
+  (fn [c]
+    (functor c)))
+
+(defn notimes
+  "TODO define fn notimes"
+  [functor])
+
+(defn notimes-alt [functor]
+  (fn [c]
+    c))
 
 (defn coll-unit [x]
   [x])
 
 (defn coll-of-unit [c]
   (fn [x]
-    (let [c-x (((notimes-fn c-coll-of) c) x)]        ; input passes the guard c
-      (((once c-coll-of) c) [c-x]))))  ; output passses the guard (c-coll c)
+    (let [cx (((notimes-alt c-coll-of) c) x)]        ; input passes the guard c
+      (((once c-coll-of) c) [cx]))))  ; output passses the guard (c-coll c)
+
+(defn maybe-unit-alt [c]
+  (fn [x]
+    ;; check if input passed the contract c
+    (let [cx (((notimes-alt maybe-alt) c) x)]
+      (((once maybe-alt) c) (Some. cx)))))
+
+(defn maybe-unit [c]
+  (fn [x]
+    ;; check if input passed the contract c
+    (let [cx ((notimes-alt maybe) x c)]
+      (maybe (Some. x) cx))))
 
 (defn coll-of-flatten [c]
   (fn [ccx] ; collection-of-collections-of-x
@@ -189,3 +214,21 @@
    (coll-of-flatten c-any))
   ([c]
    (coll-of-flatten c)))
+
+(defn maybe-flatten-alt [c]
+  (fn [mmx]
+    (let [cmmx ((maybe-alt (maybe-alt c)) mmx)]
+      (let [r (cond
+                (instance? Some mmx) (valx mmx)
+              ;; (instance? None m) mmx ; not needed
+              )]
+        ((maybe-alt c) r)))))
+
+(defn maybe-flatten [c]
+  (fn [mmx]
+    (let [cmmx (maybe (maybe mmx c) c)]
+      (let [r (cond
+                (instance? Some mmx) (valx mmx)
+              ;; (instance? None m) mmx ; not needed
+              )]
+        (maybe r c) ))))
