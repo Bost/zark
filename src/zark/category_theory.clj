@@ -67,8 +67,7 @@
   "Creates a contract for clojure.lang.IPersistentCollection object in memory.
   A functor. Takes a morphis (guarded fn) / CT object (contract) and creates
   a new morphis (guarded fn) / CT object (contract).
-  pColl must be an instance of clojure.lang.IPersistentCollection
-  TODO create tests for cCollOf working with morphisms (guarded fns)"
+  pColl must be an instance of clojure.lang.IPersistentCollection"
   [contract]
   (fn [pColl]
     (let [realColl (cColl pColl)] ; make sure coll is a collection
@@ -120,3 +119,61 @@
                     (str "Expression is false: "
                          "(or (instance? (None.) " (encode m) ")"
                          " (instance? (Some. \"\") " (encode m) "))"))))))
+
+(defn twice [functor]
+  (fn [c]
+    ((functor (functor c)))))
+
+(defn once [functor]
+  functor)
+
+(defn once-alt [functor]
+  (fn [c]
+    (functor c)))
+
+(defn noTimes [functor]
+  (fn [c]
+    c))
+
+(defn collOfUnit [c]
+  (fn [x]
+    (let [cx (((noTimes cCollOf) c) x)]        ; input passes the guard c
+      (((once cCollOf) c) [cx]))))  ; output passses the guard (cColl c)
+
+(defn maybeUnit-alt [c]
+  (fn [x]
+    (let [cx ((noTimes cCollOf) (c x))]        ; input passes the guard c
+      ((maybe-alternative c) (Some. cx)))))
+
+(defn maybeUnit [c]
+  (fn [x]
+    (let [cx (c x)]        ; input passes the guard c
+      (maybe (Some. x) cx))))
+
+;; TODO maybe
+
+(defn collOfFlatten [c]
+  (fn [aax]
+    ;; input [[1 2 3] [4 5]] passes the guard c
+    (let [caax ((cCollOf (cCollOf c)) aax)]
+      ((cCollOf c)
+       ;; from decrease the vector dimenssion by 1
+       (apply into caax)))))
+
+(defn maybeFlatten-alt [c]
+  (fn [mmx]
+    (let [cmmx ((maybe-alternative (maybe-alternative c)) mmx)]
+      (let [r (cond
+                (instance? Some mmx) (valx mmx)
+              ;; (instance? None m) mmx ; not needed
+              )]
+        ((maybe-alternative c) r)))))
+
+(defn maybeFlatten [c]
+  (fn [mmx]
+    (let [cmmx (maybe (maybe mmx c) c)]
+      (let [r (cond
+                (instance? Some mmx) (valx mmx)
+              ;; (instance? None m) mmx ; not needed
+              )]
+        (maybe r c) ))))
