@@ -130,15 +130,15 @@
       (is (= (Some. [(gf-repeat "jim") (gf-repeat "jack")])
              ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"])))))))
 
-(deftest test-maybe-alt
-  (testing "TODO Test: maybe-alt, get-or-else"
+(deftest test-get-or-else
+  (testing "Test get-or-else"
     (let [c-gf-repeat (c-coll-of gf-repeat)]
       (is (= [(gf-repeat "jim") (gf-repeat "jack")]
              (get-or-else ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"]))
                         "jane"))))))
 
-(deftest test-protocol-Maybe-with-get-or-else
-  (testing "TODO Test: maybe of the Maybe protocol, get-or-else"
+(deftest test-maybe-alt-with-protocol-Maybe
+  (testing "Test: maybe-alt, protocol-Maybe"
     ;;> (= (java.lang.Object.) (java.lang.Object.))
     ;; => false
     (is (= (cstr (maybe (Some. "jim") gf-repeat))
@@ -157,10 +157,9 @@
       (is (not= 1
                 (cstr (maybe (Some. ["jim" "jack"]) c-gf-repeat)))))))
 
-(deftest test-x
-  (testing "flatten"
+(deftest test-flatten
+  (testing "Test: flatten"
     (is (= [[1 2 3] [4 5]]
            ((c-coll-of (c-coll-of c-any)) [[1 2 3] [4 5]])))
     (is (= [1 2 3 4 5]
-           ((coll-ofFlatten c-any) [[1 2 3] [4 5]])))
-    ))
+           ((coll-of-flatten c-any) [[1 2 3] [4 5]])))))

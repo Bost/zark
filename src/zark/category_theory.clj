@@ -131,47 +131,51 @@
   (fn [c]
     (functor c)))
 
-(defn notimes [functor]
+(defn notimes
+  "TODO define fn notimes"
+  [functor])
+
+(defn notimes-alt [functor]
   (fn [c]
     c))
 
-(defn coll-ofUnit [c]
+(defn coll-of-unit [c]
   (fn [x]
-    (let [cx (((notimes c-coll-of) c) x)]        ; input passes the guard c
+    (let [cx (((notimes-alt c-coll-of) c) x)]        ; input passes the guard c
       (((once c-coll-of) c) [cx]))))  ; output passses the guard (c-coll c)
 
-(defn maybeUnit-alt [c]
+(defn maybe-unit-alt [c]
   (fn [x]
-    (let [cx (((notimes maybe-alt) c) x)]
-      ((maybe-alt c) (Some. cx)))))
+    ;; check if input passed the contract c
+    (let [cx (((notimes-alt maybe-alt) c) x)]
+      (((once maybe-alt) c) (Some. cx)))))
 
-(defn maybeUnit [c]
+(defn maybe-unit [c]
   (fn [x]
-    (let [cx (c x)]        ; input passes the guard c
+    ;; check if input passed the contract c
+    (let [cx ((notimes-alt maybe) x c)]
       (maybe (Some. x) cx))))
 
-;; TODO maybe
-
-(defn coll-ofFlatten [c]
-  (fn [aax]
+(defn coll-of-flatten [c]
+  (fn [ccx] ; collection-of-collections-of-x
     ;; input [[1 2 3] [4 5]] passes the guard c
-    (let [caax ((c-coll-of (c-coll-of c)) aax)]
+    (let [c-ccx ((c-coll-of (c-coll-of c)) ccx)]
       ((c-coll-of c)
        ;; from decrease the vector dimenssion by 1
-       (apply into caax)))))
+       (apply into c-ccx)))))
 
-(defn maybeFlatten-alt [c]
-  (fn [mmx]
-    (let [cmmx ((maybe-alt (maybe-alt c)) mmx)]
+(defn maybe-flatten-alt [c]
+  (fn [mmx] ; maybe-maybe-x
+    (let [c-mmx ((maybe-alt (maybe-alt c)) mmx)]
       (let [r (cond
                 (instance? Some mmx) (valx mmx)
               ;; (instance? None m) mmx ; not needed
               )]
         ((maybe-alt c) r)))))
 
-(defn maybeFlatten [c]
-  (fn [mmx]
-    (let [cmmx (maybe (maybe mmx c) c)]
+(defn maybe-flatten [c]
+  (fn [mmx] ; maybe-maybe-x
+    (let [c-mmx (maybe (maybe mmx c) c)]
       (let [r (cond
                 (instance? Some mmx) (valx mmx)
               ;; (instance? None m) mmx ; not needed
