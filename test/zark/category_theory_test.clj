@@ -125,10 +125,10 @@
       (is (thrown? Exception ((maybe-alt c-gf-repeat) (Some. "jim"))))
       (is (thrown? Exception ((maybe-alt c-gf-repeat) (Some. ["jim" 1]))))
 
-      (is (= (Some. ["jimjim" "jackjack"])
-             ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"]))))
-      (is (= (Some. [(gf-repeat "jim") (gf-repeat "jack")])
-             ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"])))))))
+      (is (= (cstr (Some. ["jimjim" "jackjack"]))
+             (cstr ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"])))))
+      (is (= (cstr (Some. [(gf-repeat "jim") (gf-repeat "jack")]))
+             (cstr ((maybe-alt c-gf-repeat) (Some. ["jim" "jack"]))))))))
 
 (deftest test-get-or-else
   (testing "Test get-or-else"
@@ -163,3 +163,8 @@
            ((c-coll-of (c-coll-of c-any)) [[1 2 3] [4 5]])))
     (is (= [1 2 3 4 5]
            ((coll-of-flatten c-any) [[1 2 3] [4 5]])))))
+
+(deftest test-maybe-flatten
+  (testing "Test: maybe-flatten"
+    (is (= (cstr (Some. [1 2 3 4 5]))
+           (cstr (maybe-flatten (Some. [[1 2 3] [4 5]])))))))

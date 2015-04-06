@@ -85,11 +85,29 @@
 
 ;; contracts with functions they guard form a category
 
+(defn notimes [functor]
+  (fn [c]
+    c))
+
+(defn notimes-alt [functor]
+  (fn [c]
+    c))
+
+(defn once [functor]
+  functor)
+
+(defn once-alt [functor]
+  (fn [c]
+    (functor c)))
+
 (defprotocol Maybe
   "Protocol for Category Theory Objects"
   (cstr [_])
   (valx [_])
   (get-or-else [obj else-val])
+  (maybe-flatten [mmx] [mmx c]
+    "Multimethod. m - a monadic value (maybe-maybe-x), "
+    "c - contract. Returns None or Some.")
   (maybe [m] [m c]
     "Multimethod. m - a monadic value, c - contract. Returns None or Some."))
 
@@ -98,14 +116,33 @@
   (cstr [_] "None")
   (valx [_] nil)
   (get-or-else [obj else-val] else-val)
+  (maybe-flatten [mmx] mmx) ; i.e. identity fn
   (maybe [m] m))
+
+(defn twice [functor mmx c]
+  (functor (functor mmx c) c))
+
+(defn twice-fn [functor]
+  (fn [mmx c]
+    (functor (functor mmx c) c)))
 
 (deftype Some [x]
   Maybe
   (cstr [_] (str "Some " x))
   (valx [_] x)
   (get-or-else [obj else-val] (valx obj))
-  (maybe [m c] (Some. (c (valx m)))))
+  
+  (maybe [m c] (Some. (c (valx m))))
+  
+  (maybe-flatten
+    [mmx] (maybe-flatten mmx c-any))
+  
+  (maybe-flatten
+    [mmx c] ; maybe-maybe-x
+    (let [c-mmx ((twice-fn maybe) mmx c)
+          ;; TODO test if (apply into c-mmx) works for any kind of collections
+          flat-val (apply into (valx c-mmx))]
+      (Some. flat-val))))
 
 (defn maybe-alt
   "Functor. Can be used as an alternative to throwing an exception.
@@ -120,41 +157,28 @@
                          "(or (instance? (None.) " (encode m) ")"
                          " (instance? (Some. \"\") " (encode m) "))"))))))
 
-(defn twice [functor]
-  (fn [c]
-    ((functor (functor c)))))
+(defn maybe-unit [c]
+  (fn [x]
+    ;; check if input passed the contract c
+    (let [c-x ((notimes-alt maybe) x c)]
+      (maybe (Some. x) c-x))))
 
-(defn once [functor]
-  functor)
-
-(defn once-alt [functor]
-  (fn [c]
-    (functor c)))
-
-(defn notimes
-  "TODO define fn notimes"
-  [functor])
-
-(defn notimes-alt [functor]
-  (fn [c]
-    c))
+(defn coll-unit [x]
+  [x])
 
 (defn coll-of-unit [c]
   (fn [x]
-    (let [cx (((notimes-alt c-coll-of) c) x)]        ; input passes the guard c
-      (((once c-coll-of) c) [cx]))))  ; output passses the guard (c-coll c)
+    (let [c-x (((notimes-alt c-coll-of) c) x)]        ; input passes the guard c
+      (((once c-coll-of) c) [c-x]))))  ; output passses the guard (c-coll c)
+
+(defn maybe-unit [c]
+  (Some. c))
 
 (defn maybe-unit-alt [c]
   (fn [x]
     ;; check if input passed the contract c
-    (let [cx (((notimes-alt maybe-alt) c) x)]
-      (((once maybe-alt) c) (Some. cx)))))
-
-(defn maybe-unit [c]
-  (fn [x]
-    ;; check if input passed the contract c
-    (let [cx ((notimes-alt maybe) x c)]
-      (maybe (Some. x) cx))))
+    (let [c-x (((notimes-alt maybe-alt) c) x)]
+      (((once maybe-alt) c) (Some. c-x)))))
 
 (defn coll-of-flatten [c]
   (fn [ccx] ; collection-of-collections-of-x
@@ -164,20 +188,8 @@
        ;; from decrease the vector dimenssion by 1
        (apply into c-ccx)))))
 
-(defn maybe-flatten-alt [c]
-  (fn [mmx] ; maybe-maybe-x
-    (let [c-mmx ((maybe-alt (maybe-alt c)) mmx)]
-      (let [r (cond
-                (instance? Some mmx) (valx mmx)
-              ;; (instance? None m) mmx ; not needed
-              )]
-        ((maybe-alt c) r)))))
-
-(defn maybe-flatten [c]
-  (fn [mmx] ; maybe-maybe-x
-    (let [c-mmx (maybe (maybe mmx c) c)]
-      (let [r (cond
-                (instance? Some mmx) (valx mmx)
-              ;; (instance? None m) mmx ; not needed
-              )]
-        (maybe r c) ))))
+(defn coll-flatten
+  ([]
+   (coll-of-flatten c-any))
+  ([c]
+   (coll-of-flatten c)))
