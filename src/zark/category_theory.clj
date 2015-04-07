@@ -111,7 +111,7 @@
   (maybe [m] [m c]
     "Multimethod. m - a monadic value, c - contract. Returns None or Some.")
 
-  (unit [c])
+  (unit [m c])
   )
 
 (deftype None []
@@ -121,7 +121,7 @@
   (get-or-else [obj else-val] else-val)
   (flattenx [mmx] mmx) ; i.e. identity fn
   (maybe [m] m)
-  (unit [c] (None.))
+  (unit [m c] (None.))
   )
 
 (deftype Some [x]
@@ -142,10 +142,10 @@
 
   (maybe [m c] (Some. (c (valx m))))
 
-  (unit [c]
+  (unit [m c]
     ;; check if input passed the contract c
     ;; should be the same as just returning the m
-    (let [c-x (((notimes-fn maybe) c) x)]
+    (let [c-x (((notimes-fn maybe) c) (valx m))]
       (((once-fn maybe) c-x)) (Some. c-x))))
 
 
