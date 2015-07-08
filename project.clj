@@ -7,9 +7,9 @@
                  [com.datomic/datomic-free "0.9.5153" :exclusions [joda-time]]
                  ]
   :plugins [
-            [lein-cljfmt "0.1.9"]
+            [lein-cljfmt "0.1.10"]
             [cider/cider-nrepl "0.9.0-SNAPSHOT"]
-            [refactor-nrepl "0.3.0-SNAPSHOT"]
+            [refactor-nrepl "1.0.1"]
             ]
   ;; TODO: uncomment this for autorun :main zark.core
   ;; This namespace will get loaded automatically when you launch a repl.
