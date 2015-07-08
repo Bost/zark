@@ -4,12 +4,11 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [com.datomic/datomic-free "0.9.5153" :exclusions [joda-time]]
+                 [com.datomic/datomic-free "0.9.5198" :exclusions [joda-time]]
+                 [org.clojure/core.logic "0.8.10"]                 
                  ]
   :plugins [
-            [lein-cljfmt "0.1.10"]
-            [cider/cider-nrepl "0.9.0-SNAPSHOT"]
-            [refactor-nrepl "1.0.1"]
+            [lein-cljfmt "0.2.0"]
             ]
   ;; TODO: uncomment this for autorun :main zark.core
   ;; This namespace will get loaded automatically when you launch a repl.
