@@ -1,5 +1,5 @@
 ;;; -*- mode: clojure; mode: clojure-test -*-
-(ns zark.schemer
+(ns zark.reasoned-schemer
   (:use clojure.core.logic)
   (:refer-clojure :exclude [== inc reify]))
 
