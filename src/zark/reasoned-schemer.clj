@@ -1,19 +1,23 @@
 ;;; -*- mode: clojure; mode: clojure-test -*-
 (ns zark.reasoned-schemer
   (:use clojure.core.logic)
-  (:refer-clojure :exclude [== inc reify]))
+  (:refer-clojure :exclude [== inc reify >= <= > < =]))
 
 ;; the reasoned schemer
 
 (run* [q]
+  (== 1 1)) ;; (_0) - anything & nothing will solve this puzzle
+
+(run* [q]
   u#)
 
-(def t# true)
-(def f# false)
+;; (clojure.repl/doc def)
+(def t# "just true" true)   ; (clojure.repl/doc t#)
+(def f# "just false" false) ; (clojure.repl/doc f#)
 
 ;; '==' means 'unify'
 (run* [q]
-  (== t# q))
+  (== f# q)) ;; (false) i.e successfull unification; it's value is f#
 
 (run* [q]
   u#
@@ -55,7 +59,10 @@
     (fresh [x]
       (== t# x))))
 
+;; cons: Returns a new seq where x is the first element and seq is the rest.
 (cons 1 ()) ;; create a list containg 1: (1)
+;; lcons: Constructs a seq a with an improper tail d if d is a logic variable.
+(lcons 1 ()) ;; create a list containg 1: (1)
 
 ;; (cdr '(1 2))
 
@@ -84,6 +91,7 @@
 
 (run* [q]
   (== q
+      ;; (clojure.repl/doc cond)
       (cond
         f# t#
         :else f#)))
@@ -164,6 +172,7 @@
 (def teacupo
   (fn [x]
     (conde
+     ;; (clojure.repl/doc ==)
      [(== 'tea x) s#]
      [(== 'cup x) s#]
      [s# u#]
@@ -194,11 +203,117 @@
 (run* [r]
   (fresh [x y z]
     (conde
-     [(== x y) (fresh [x] (== z x)) (== f# x) s#]  ; (_0 _1)
-     [(fresh [x] (== y x)) (== z x) (== t# x) s#]  ; (_0 _1)
+     [(== x y) (fresh [x] (== z x)) (== f# x) s#]  ; 1. (y:false z:_0   x:false)
+     [(fresh [x] (== y x)) (== z x) (== t# x) s#]  ; 2. (y:_0    z:true x:true)
      [s# u#]
      )
-    ;; (== f# x)
-    (== (cons z (cons y ())) r)
-    ))
+    (== (cons z (cons y ())) r))) ;; ((_0 false) (true _0))
 
+(run* [r]
+  (fresh [x y z]
+    ;; (clojure.repl/doc conde)
+    (conde
+     [(== x y) (fresh [x] (== z x)) (== f# x) s#]  ; 1. (y:false z:_0   x:false)
+     [(fresh [x] (== y x)) (== z x) (== t# x) s#]  ; 2. (y:_0    z:true x:true)
+     [s# u#]
+     )
+    (== f# x) ; this colides with 2.
+    (== (cons z (cons y ())) r))) ;; ((_0 false))
+
+(run* [q]
+  (let [a (== t# q)
+        b (fresh [x]
+            (== f# q)
+            (== x q)
+            )
+        c (conde
+           [(== t# q) s#]
+           [s# (== f# q)])]
+    a)) ;; (true) - b, c are ignored
+
+(run* [q]
+  (let [a (== t# q)
+        b (fresh [x]
+            (== f# q)
+            (== x q)
+            )
+        c (conde
+           [(== t# q) s#]
+           [s# (== f# q)])]
+    b)) ;; (false) - a, c are ignored
+
+(run* [q]
+  (let [a (== t# q)
+        b (fresh [x]
+            (== f# q)
+            (== x q)
+            )
+        c (conde
+           [(== t# q) s#]
+           [s# (== f# q)])]
+    c)) ;; (true false) - a, b are ignored
+
+
+;; Chapter 2. Teaching Old Toys New Tricks
+
+;; (clojure.repl/doc run*)
+
+;; example nr 2.
+(run* (r)
+  (fresh [x y]
+    (==
+     (list x y) ; equivalent with (cons x (cons y ()))
+     r))) ;; ((_0 _1)) the result in the book is (probably) wrong
+
+(run* (r)
+  (fresh [v w]
+    (== (let [x v
+              y w]
+          (list x y))
+        r))) ;; ((_0 _1))
+
+(def car first)
+
+;; (clojure.repl/doc firsto)
+(car (list 'a 'c 'o 'r 'n)) ;; a
+(car (list 1 2 3 4 5)) ;; 1
+
+(run* [r]
+  (firsto (list 'a 'c 'o 'r 'n) r)) ;; (a)
+
+;; (clojure.repl/doc ==)
+(run* [r]
+  (fresh [x y z]
+    (== x (lcons 1 (lcons 2 ())))
+    (== y (list 1 2))
+    (== z '(1 2))
+
+    (== x y)
+    (== y z)
+    (== x z)
+
+    (== t# r))) ;; (true) - the lists can be unified (are the same)
+
+(run* (r)
+  (fresh [x y]
+    (firsto (list r y) x)
+    (== 'pear x)))
+
+(def caro
+  "A function of 2 arguments"
+  (fn [p a] ; in the a the result is accumulated
+    (fresh [d]
+      ;; (clojure.repl/doc lcons)
+      (== (lcons a d) p))))
+
+;; (run* [q]
+;;   (fresh [x]
+;;     (caro (list 1 2) x)
+;;     (== t# q)))
+
+(run* (r)
+  (fresh [x y]
+    (caro (list r y) x)
+    (== 'pear x)))
+
+;; page 26; the caro definition
