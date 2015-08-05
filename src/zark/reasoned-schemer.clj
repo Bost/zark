@@ -450,3 +450,23 @@
     (== t# x)))
 
 ;; page 29
+
+(run* [l]
+  (fresh [d x y w s]
+    (conso w (list 'a 'n 's) s) ; 1. (conso w (list 'a 'n 's) s) => s = (list _ 'a 'n 's)
+    (cdro l s)                  ; 2. (cdro l (list _ 'a 'n 's))  => l = (list _ _'a 'n 's)
+    (caro l x)                  ; 4. (caro (list _ _ 'a 'n 's) 'b)  => l = (list 'b _ 'a 'n 's)
+    (== b x)                    ; 3. 
+    (cdro l d)                  ; 7. (cdro (list 'b _ 'a 'n 's) (list 'e _)) => l = (list 'b 'e 'a 'n 's)  
+    (caro d y)                  ; 6. (caro d 'e) => d = (list 'e _)
+    (== e y)))                  ; 5.
+
+(empty? (list 'grape 'raising 'pear))
+
+(empty? (list))
+
+(run* (q)
+  (emptyo '(grape raisin pear))
+  (== t# q))
+
+;; page 30
