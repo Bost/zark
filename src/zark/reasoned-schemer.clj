@@ -552,32 +552,66 @@
 
 ;; Chapter 3. Seeing old friend in new ways; page 35
 
-;; (def llist?
-;;   (fn [l]
-;;     (cond
-;;       (nil? l)
-;;       t#
-
-;;       (pair? l)
-;;       (if (llist? (cdr l)) t# f#)
-
-;;       :else f#
-;;       )))
-
 (seq? nil)    ;; false
 (seq? 'a)     ;; false
 (seq? (list)) ;; true
 (seq? '())    ;; true
 
-(seq? '('('a) '('a 'b) 'c)) ;; true
-(seq? '((a) (a b) c))       ;; true
+(seq? '((a) (a b) c))   ;; true
 
-(clojure.core/= '() (list))           ;; true
-(clojure.core/= '('()) (list (list))) ;; false
+(clojure.core/= '() (list))          ;; true
+(clojure.core/= '(()) (list (list))) ;; true
 
 (clojure.core/= '((a) (a b) c)
-                '('('a) '('a 'b) 'c)) ;; false
+                (list '(a) '(a b) 'c)
+                (list (list 'a) (list 'a 'b) 'c)) ;; true
 
-(seq? (list (list 'a) (list 'a 'b) 'c)) ;; true
-(llist? (llist 'd 'a 't 'e 's)) ;; true
+(seq? '((a) (a b) c)) ;; true
 
+;; following two s-expressions seem to be equal
+'(a . b)      ;; (a . b)
+(llist 'a 'b) ;; (a . b)
+;; but(!) they are not:
+(clojure.core/= '(a . b)
+                (llist 'a 'b)) ;; false - the types are different:
+(type '(a . b))      ;; PersistentList
+(type (llist 'a 'b)) ;; LCons
+
+(def list?
+  (fn [l]
+    (cond
+      ;; (empty? nil) ;; true
+      ;; (empty? ())  ;; true
+      (empty? l)
+      t#
+
+      ;; (pair? '(a b)) ;; true
+      (pair? l)
+      (if (list? (cdr l)) t# f#)
+
+      :else f#
+      )))
+
+(type (cdr '(a b))) ;; PersistentList
+(type (seq '(a b))) ;; PersistentList
+
+(cdr nil) ;; ()
+(pair? ()) ;; ()
+
+(list? '(d a t e s)) ;; true
+(seq? '(d a t e s))  ;; true
+
+(run* [r]
+  (cdro '(a) r))
+
+(def listo
+  (fn [l]
+    (conde
+     [(emptyo l) s#]
+     [(pairo l) (fresh [d]    ;; unnesting - the s-expression (fresh ...)
+                  (cdro l d)  ;; in the end cdro returns an empty list
+                  (listo d))]
+     [s# u#]
+     )))
+
+;; page 36
