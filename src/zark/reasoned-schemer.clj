@@ -615,3 +615,9 @@
      )))
 
 ;; page 36
+
+(run* [r]
+  (listo (llist 'a 'b r 'c))) ;; (_0)
+
+(run 1 [r]
+  (listo (list 'a 'b 'c . x))) ;;
