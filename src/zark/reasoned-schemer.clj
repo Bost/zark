@@ -86,8 +86,7 @@
 (run* [q]
   (fresh [x]
     (== t# x)
-    (== x q)
-    ))
+    (== x q)))
 
 (run* [q]
   (== q
@@ -184,11 +183,10 @@
 (run* [r]
   (fresh [x y]
     (conde
-     [(teacupo x) (== t# y) s#]  ;; x is (tea cup); y is true; whole result is ((tea true) (cup true))
-     [(== f# x) (== t# y)]       ;; x is false; y is true; whole result is (false true)
+     [(teacupo x) (== t# y) s#]   ;; x is (tea cup); y is true; whole result is ((tea true) (cup true))
+     [(== f# x) (== t# y)]        ;; x is false; y is true; whole result is (false true)
      [s# u#])
-    (== (cons x (cons y ())) r)
-    )) ;; ((tea true) (cup true) (false true))
+    (== (cons x (cons y ())) r))) ;; ((tea true) (cup true) (false true))
 
 (run* [r]
   (fresh [x y z]
@@ -197,8 +195,7 @@
      [(fresh [x] (== y x)) (== z x)]  ; (_0 _1)
      [s# u#]
      )
-    (== (cons y (cons z ())) r)
-    )) ;; ((_0 _1) (_0 _1))
+    (== (cons y (cons z ())) r))) ;; ((_0 _1) (_0 _1))
 
 (run* [r]
   (fresh [x y z]
@@ -224,8 +221,7 @@
   (let [a (== t# q)
         b (fresh [x]
             (== f# q)
-            (== x q)
-            )
+            (== x q))
         c (conde
            [(== t# q) s#]
            [s# (== f# q)])]
@@ -235,8 +231,7 @@
   (let [a (== t# q)
         b (fresh [x]
             (== f# q)
-            (== x q)
-            )
+            (== x q))
         c (conde
            [(== t# q) s#]
            [s# (== f# q)])]
@@ -246,8 +241,7 @@
   (let [a (== t# q)
         b (fresh [x]
             (== f# q)
-            (== x q)
-            )
+            (== x q))
         c (conde
            [(== t# q) s#]
            [s# (== f# q)])]
@@ -277,10 +271,13 @@
 
 ;; (clojure.repl/doc firsto)
 (car (list 'a 'c 'o 'r 'n)) ;; a
+(car '(a c o r n))          ;; a
 (car (list 1 2 3 4 5)) ;; 1
 
 (run* [r]
   (firsto (list 'a 'c 'o 'r 'n) r)) ;; (a)
+(run* [r]
+  (firsto '(a c o r n) r))          ;; (a)
 
 ;; (clojure.repl/doc ==)
 (run* [r]
@@ -319,9 +316,15 @@
 
 ;; page 26; the caro definition
 
+(car '((a) (b) (c))) ;; (a)
+
 (cons
  (car (list 'grape 'raisin 'pear))
- (car (list (list 'a) (list 'b) (list 'c)))) ;; (grape (a) (b) (c)))
+ (car (list (list (list 'a) (list 'b) (list 'c))))) ;; (grape (a) (b) (c)))
+
+(cons
+ (car '(grape raisin pear))
+ (car '(((a) (b) (c)))))      ;; (grape (a) (b) (c)))
 
 (run* [r]
   (fresh [x y]
@@ -330,7 +333,8 @@
     (== (lcons x y) r))) ;; ((grape a))
 
 ;; (clojure.repl/doc rest)
-(cdr (list 'grape 'raisin 'pear))
+(cdr (list 'grape 'raisin 'pear)) ;; (rainin pear)
+(cdr '(grape raisin pear))        ;; (rainin pear)
 
 (def cdro
   "A function of 2 arguments - almost own deduction! Yay! :)"
@@ -340,62 +344,67 @@
 
 (run* [r]
   (fresh [v]
-    (cdro (list 'a 'c 'o 'r 'n) v)
-    (caro v r)))
+    (cdro '(a c o r n) v)
+    (caro v r))) ;; (c)
 
 (run* [a]
   ;; (clojure.repl/doc cdro)
-  (cdro (list 'grape 'raisin 'pear) a))
+  (cdro '(grape raisin pear) a))
 
 (cons
- (cdr (list 'grape 'raisin 'pear))
- (car (list (list 'a) (list 'b) (list 'c))))
-;; (cons (list 'raisin 'pear) (list 'a)) => ((raisin pear) a)
+ (cdr '(grape raisin pear))
+ (car '((a) (b) (c))))
+;; (cons '(raisin pear) (a)) => ((raisin pear) a)
 
 (run* [r]
   (fresh [x y]
-    (cdro (list 'a 'c 'o 'r 'n) x)                ; x: (list 'c 'o 'r 'n)
-    (caro (list (list 'a) (list 'b) (list 'c)) y) ; y: (list 'a)
-    (== (lcons x y) r))) ; (lcons (list 'c 'o 'r 'n) (list 'a)) => ((c o r n) a) => (((c o r n) a))
+    (cdro '(a c o r n) x)                ; x: '(a c o r n)
+    (caro '((a) (b) (c)) y) ; y: '(a)
+    (== (lcons x y) r))) ; (lcons '(a c o r n) '(a)) => ((c o r n) a) => (((c o r n) a))
 
 (run* [q]
-  (cdro (list 'a 'c 'o 'r 'n) (list 'c 'o 'r 'n))
-  (== t# q))
+  (cdro '(a c o r n) '(c o r n))
+  (== t# q)) ;; (true)
 
 (run* [l]
   (fresh [x]
     ;; it becomes clear if I change the order of expressions:
-    (cdro l (list 'c 'o 'r 'n))
+    (cdro l '(c o r n))
     (caro l x)
-    (== 'a x)))
+    (== 'a x))) ;; ((a c o r n))
 
 (run* [l]
   (fresh [x]
     ;; it becomes clear if I change the order of expressions:
     (== 'a x)
     (caro l x)                   ; (caro _0 'a)
-    (cdro l (list 'c 'o 'r 'n))  ; (cdro _0 (list 'c 'o 'r 'n))
-    ))
+    (cdro l '(c o r n))))  ; (cdro _0 '(c o r n))
 ;;caro and cdro are complementary - so probably I take take the lcons because ???
 ;; (it belongs to the pack)
 
 (run* [l]
-  (conso (list 'a 'b 'c) (list 'd 'e) l)) ;; (((a b c) d e))
+  (conso '(a b c) '(d e) l)) ;; (((a b c) d e))
 
 (run* [x]
-  (conso x (list 'a 'b 'c) (list 'd 'a 'b 'c))) ;; (d)
+  (conso x '(a b c) '(d a b c))) ;; (d)
+
+(run* [r]
+  (fresh [x y z]
+    ;; can't use the '(e a d x) - x is a free variable
+    (== (list 'e 'a 'd x) r)      ;; r: '(e a d _0)
+    (conso y (list 'a z 'c) r))) ;; (conso _1 '(a _2 c) '(e a d _0))
 
 (run* [r]
   (fresh [x y z]
     (== (list 'e 'a 'd x) r)    ; r: (list 'e 'a 'd _0)
     (conso y (list 'a z 'c) r))) ; (conso _1 (list 'a _2 'c) (list 'e 'a 'd _0))
 ;; x: 'c
-;; r: ((list 'e 'a 'd 'c))
+;; r: ((e a d c))
 ;; z: 'd
 ;; y: 'e
 
 (run* [x]
-  (conso x (list 'a x 'c) (list 'd 'a x 'c)));; d
+  (conso x (list 'a x 'c) (list 'd 'a x 'c))) ;; (d)
 
 ;; page 29
 
@@ -403,7 +412,7 @@
   (fresh [x]
     (== (list 'd 'a x 'c) l)      ; l: (list 'd 'a x 'c)
     (conso x (list 'a x 'c) l)))
-;; (conso x (list 'a x 'c) (list 'd 'a x 'c)) => ((list 'd 'a 'd 'c))
+;; (conso x (list 'a x 'c) (list 'd 'a x 'c)) => ((d a d c))
 
 (def -cons0
   (fn [a b c]
@@ -422,12 +431,12 @@
   (+cons0 1 (list 2) x))
 
 (run* [x]
-  (-cons0 'a (list 'b) (list 'a 'b))
-  (== t# x))
+  (-cons0 'a '(b) '(a b))
+  (== t# x)) ;; (true)
 
 (run* [x]
-  (+cons0 'a (list 'b) (list 'a 'b))
-  (== t# x))
+  (+cons0 'a '(b) '(a b))
+  (== t# x)) ;; (true)
 
 (run* [x]
   (fresh [u v]
@@ -461,13 +470,15 @@
     (caro d y)                  ;; 6. (caro d 'e) => d = (list 'e _)
     (== 'e y)))                 ;; 5.
 
-(empty? (list 'grape 'raising 'pear)) ; false
+(empty? (list 'grape 'raising 'pear)) ;; false
+(empty? '(grape raising pear))        ;; false
 
-(empty? (list)) ; true
+(empty? (list)) ;; true
+(empty? '())    ;; true
 
 (run* (q)
   (emptyo '(grape raisin pear))
-  (== t# q)) ; ()
+  (== t# q)) ;; ()
 
 ;; page 30
 
@@ -476,7 +487,7 @@
 
 (run* (q)
       (== 'plum 'plum)
-      (== t# q)) ; (true)
+      (== t# q)) ;; (true)
 
 (def eqo
   (fn [x y]
@@ -494,7 +505,7 @@
 ;; (llist 'pear)                    ;; exception - must be at least 2 args
 (list 'split 'pear)                 ;; (split pear)
 (llist 'split 'pear)                ;; (split . pear)
-(llist 'split ())                   ;; (split)
+(llist 'split '())                  ;; (split)
 (llist 'split (list 'pear))         ;; (split pear)
 (llist 'split (llist 'pear 'plum))  ;; (split pear . plum)
 
@@ -509,6 +520,8 @@
 (pair? '())                         ;; false
 (pair? 'pear)                       ;; false
 (pair? (list 'pear))                ;; true
+(pair? (list 'a 'b))                ;; true
+(pair? (list 'a 'b 'c))             ;; true
 
 (cdr (list 'split))                 ;; ()
 
@@ -537,4 +550,34 @@
       (pairo 'pair)
       (== t# q)) ;; ()
 
-;; Chapter 3. Seeing old friend in new ways
+;; Chapter 3. Seeing old friend in new ways; page 35
+
+;; (def llist?
+;;   (fn [l]
+;;     (cond
+;;       (nil? l)
+;;       t#
+
+;;       (pair? l)
+;;       (if (llist? (cdr l)) t# f#)
+
+;;       :else f#
+;;       )))
+
+(seq? nil)    ;; false
+(seq? 'a)     ;; false
+(seq? (list)) ;; true
+(seq? '())    ;; true
+
+(seq? '('('a) '('a 'b) 'c)) ;; true
+(seq? '((a) (a b) c))       ;; true
+
+(clojure.core/= '() (list))           ;; true
+(clojure.core/= '('()) (list (list))) ;; false
+
+(clojure.core/= '((a) (a b) c)
+                '('('a) '('a 'b) 'c)) ;; false
+
+(seq? (list (list 'a) (list 'a 'b) 'c)) ;; true
+(llist? (llist 'd 'a 't 'e 's)) ;; true
+
