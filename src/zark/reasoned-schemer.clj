@@ -453,20 +453,88 @@
 
 (run* [l]
   (fresh [d x y w s]
-    (conso w (list 'a 'n 's) s) ; 1. (conso w (list 'a 'n 's) s) => s = (list _ 'a 'n 's)
-    (cdro l s)                  ; 2. (cdro l (list _ 'a 'n 's))  => l = (list _ _'a 'n 's)
-    (caro l x)                  ; 4. (caro (list _ _ 'a 'n 's) 'b)  => l = (list 'b _ 'a 'n 's)
-    (== b x)                    ; 3. 
-    (cdro l d)                  ; 7. (cdro (list 'b _ 'a 'n 's) (list 'e _)) => l = (list 'b 'e 'a 'n 's)  
-    (caro d y)                  ; 6. (caro d 'e) => d = (list 'e _)
-    (== e y)))                  ; 5.
+    (conso w (list 'a 'n 's) s) ;; 1. (conso w (list 'a 'n 's) s) => s = (list _ 'a 'n 's)
+    (cdro l s)                  ;; 2. (cdro l (list _ 'a 'n 's))  => l = (list _ _'a 'n 's)
+    (caro l x)                  ;; 4. (caro (list _ _ 'a 'n 's) 'b)  => l = (list 'b _ 'a 'n 's)
+    (== 'b x)                   ;; 3.
+    (cdro l d)                  ;; 7. (cdro (list 'b _ 'a 'n 's) (list 'e _)) => l = (list 'b 'e 'a 'n 's)
+    (caro d y)                  ;; 6. (caro d 'e) => d = (list 'e _)
+    (== 'e y)))                 ;; 5.
 
-(empty? (list 'grape 'raising 'pear))
+(empty? (list 'grape 'raising 'pear)) ; false
 
-(empty? (list))
+(empty? (list)) ; true
 
 (run* (q)
   (emptyo '(grape raisin pear))
-  (== t# q))
+  (== t# q)) ; ()
 
 ;; page 30
+
+(clojure.core/= 'pear 'plum)
+(clojure.core/= 'plum 'plum)
+
+(run* (q)
+      (== 'plum 'plum)
+      (== t# q)) ; (true)
+
+(def eqo
+  (fn [x y]
+    (== x y)))
+
+(defn pair? [x]
+  (if (or (lcons? x)
+          (and (coll? x) (seq x)))
+    true false))
+
+;; llist - Constructs a seq from 2 or more args. Last argument is tail
+;; list - Creates a new list containing the items.
+
+(list 'pear)                        ;; (pear)
+;; (llist 'pear)                    ;; exception - must be at least 2 args
+(list 'split 'pear)                 ;; (split pear)
+(llist 'split 'pear)                ;; (split . pear)
+(llist 'split ())                   ;; (split)
+(llist 'split (list 'pear))         ;; (split pear)
+(llist 'split (llist 'pear 'plum))  ;; (split pear . plum)
+
+(pair? (list 'split 'pear))         ;; true
+(pair? (llist 'split 'pear))        ;; true
+(pair? (list (llist 'split 'pear))) ;; true
+(pair? (list 'pear))                ;; true
+
+(list)                              ;; ()
+(pair? (list))                      ;; false
+'()                                 ;; ()
+(pair? '())                         ;; false
+(pair? 'pear)                       ;; false
+(pair? (list 'pear))                ;; true
+
+(cdr (list 'split))                 ;; ()
+
+;; (cons (list 'split) 'pea)        ;; exception
+(cons 'pea (list 'split))           ;; (pea split)
+(lcons (list 'split) 'pea)          ;; ((split) . pea)
+
+(def pairo
+  (fn [p]
+    (fresh [a d]
+      (conso a d p))))
+
+(run* [q]
+  (pairo (cons q q))
+  (== t# q)) ;; (true)
+
+;; (pairo '())    ;; returns an object
+;; (pairo (list)) ;; returns an object
+;; (pairo ())     ;; returns an object
+
+(run* [q]
+  (pairo (list))
+  (== t# q)) ;; ()
+
+(run* (q)
+      (pairo 'pair)
+      (== t# q)) ;; ()
+
+;; Chapter 3. Seeing old friend in new ways
