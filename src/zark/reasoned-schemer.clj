@@ -298,7 +298,7 @@
     (== 'pear x)))
 
 (def caro
-  "A function of 2 arguments"
+  "A function of 2 arguments. Returns a sequence. Returns a sequenco"
   (fn [p a] ; in the a the result is accumulated
     (fresh [d]
       ;; (clojure.repl/doc lcons)
@@ -337,7 +337,7 @@
 (cdr '(grape raisin pear))        ;; (rainin pear)
 
 (def cdro
-  "A function of 2 arguments - almost own deduction! Yay! :)"
+  "A function of 2 arguments. Returns a sequence. (Almost own deduction! Yay! :)"
   (fn [p a]
     (fresh [d]
       (== (lcons d a) p))))
@@ -490,13 +490,16 @@
       (== t# q)) ;; (true)
 
 (def eqo
+  "A goal that attempts to unify terms x and y."
   (fn [x y]
     (== x y)))
 
-(defn pair? [x]
-  (if (or (lcons? x)
-          (and (coll? x) (seq x)))
-    true false))
+(def pair?
+  "Checks if x is (instance? LCons x) or a sequence. Returns Boolean"
+  (fn [x]
+    (if (or (lcons? x)
+            (and (coll? x) (seq x)))
+      t# f#)))
 
 ;; llist - Constructs a seq from 2 or more args. Last argument is tail
 ;; list - Creates a new list containing the items.
@@ -530,9 +533,10 @@
 (lcons (list 'split) 'pea)          ;; ((split) . pea)
 
 (def pairo
-  (fn [p]
+  "Returns a goal. Checks if l is a LCons-list"
+  (fn [l]
     (fresh [a d]
-      (conso a d p))))
+      (conso a d l))))
 
 (run* [q]
   (pairo (cons q q))
@@ -578,19 +582,16 @@
 (type (llist 'a 'b)) ;; LCons
 
 (def list?
+  "Is l a list? Questions and answers in the cond are Booleans"
   (fn [l]
     (cond
       ;; (empty? nil) ;; true
       ;; (empty? ())  ;; true
-      (empty? l)
-      t#
+      (empty? l) t#
 
       ;; (pair? '(a b)) ;; true
-      (pair? l)
-      (if (list? (cdr l)) t# f#)
-
-      :else f#
-      )))
+      (pair? l) (if (list? (cdr l)) t# f#)
+      :else f#)))
 
 (type (cdr '(a b))) ;; PersistentList
 (type (seq '(a b))) ;; PersistentList
@@ -605,19 +606,112 @@
   (cdro '(a) r))
 
 (def listo
+  "Is l a list? Questions and answers in the conde are goals"
   (fn [l]
     (conde
      [(emptyo l) s#]
      [(pairo l) (fresh [d]    ;; unnesting - the s-expression (fresh ...)
                   (cdro l d)  ;; in the end cdro returns an empty list
                   (listo d))]
-     [s# u#]
-     )))
+     [s# u#])))
 
 ;; page 36
 
+(list 'a 'b) ;; (a b)
+(type (list 'a 'b)) ;; PersistentList
 (run* [r]
-  (listo (llist 'a 'b r 'c))) ;; (_0)
+  (listo (list 'a 'b r 'c))) ;; (_0)
+
+(llist 'a 'b) ;; (a . b)
+(type (llist 'a 'b)) ;; LCons
+(run* [r]
+  (listo (llist 'a 'b r 'c))) ;; ()
+
+(llist 'a 'b 'c) ;; (a b . c)
 
 (run 1 [r]
-  (listo (list 'a 'b 'c . x))) ;;
+  (listo (llist 'a 'b 'c r))) ;; (())
+;; because (llist 'a 'b 'c r) is a proper LCons list when r is empty LCons list
+
+(run 1 [r]
+  (listo (list 'a 'b 'c r))) ;; (_0)
+
+;; (run* [r]
+;;   (listo r)) ;; java.lang.StackOverflowError
+
+(run* [r]
+  (listo (llist 'a 'b 'c r))) ;; java.lang.StackOverflowError
+
+;; 5 is an upper bound (to keep from creating a list with unbounded number of vals)
+(run 5 [r]
+  (listo (llist 'a 'b 'c r))) ;; (() (_0) (_0 _1) (_0 _1 _2) (_0 _1 _2 _3))
+
+;; page 38
+
+(def lol?
+  "Is l a list of lists? Questions and answers in the conde are Booleans"
+  (fn [l]
+    (conde
+     [(empty? l) t#]
+     [(list? (car l)) (lol? (cdr l))]
+     [s# u#])))
+
+(def lolo
+  "Is l list of lists?. Questions and answers in the conde are goals"
+  (fn [l]
+    (conde
+     [(emptyo l) s#]
+     [(fresh [a]         ;; (list? (car l)) has been unnested
+        (caro l a)
+        (listo a))
+      (fresh [d]         ;; (lol? (cdr l)) has been unnested
+        (cdro l d)
+        (lolo d))]
+     [s# u#])))
+
+(run 1 [l]
+  (lolo l)) ;; (())
+
+(run* [q]
+  (fresh [x y]
+    (lolo (list (list 'a 'b)
+                (list  x 'c)
+                (list 'd  y)))
+    (== t# q))) ;; (true) because the lolo became a list of lists as an input
+
+(run* [q]
+  (fresh [x y]
+    (lolo (list (list 'a 'b)
+                (list  x 'c)
+                (list 'd  y)
+                'd))
+    (== t# q))) ;; ()
+;;because lolo needs a list of lists as an agrument but 'd is not a list
+
+(run 1 [q]
+  (fresh [x]
+    ;; emptyo of a fresh variable always suceeds and associates it with ()
+    (lolo (llist list ('a 'b) x))
+    (== t# q))) ;; (true)
+
+(run 1 [x]
+  (lolo (list '(a b) '(c d) x))) ;; (())
+(run 1 [x]
+  (lolo (llist '(a b) '(c d) x))) ;; (())
+
+(run 5 [x]
+  (lolo (list '(a b) '(c d) x))) ;; (() (_0) (_0 _1) (_0 _1 _2) (_0 _1 _2 _3))
+(run 5 [x]
+  (lolo (llist '(a b) '(c d) x))) ;; (() (()) ((_0)) (() ()) ((_0 _1)))
+(run 5 [x]
+  (lolo (llist (list 'a 'b) (list 'c 'd) x))) ;; (() (()) ((_0)) (() ()) ((_0 _1)))
+
+(llist (list '(a b) '(c d)) (list '() '())) ;; this is the same as (((a b) (c d)) () ()) ???
+;; i.e. (list '() '()) got unnested to () ()
+;; (list 'a 'b 'c): (a -> (b -> (c nil)))
+;; (list ): (nil nil)
+;; (list (list) (list)): (nil -> (nil nil))
+;; (list 'a (list (list) (list))): (a -> (nil -> (nil nil))) this should be the same as
+;; (list 'a (list) (list)): (a -> (nil -> (nil nil)))
+;; page 40
+
