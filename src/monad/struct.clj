@@ -44,29 +44,39 @@
   "η: idC -> T; idC is an identity functor on C"
   (type-constructor s z l))
 
-(t/ann bind [Mt [t t t -> Mt] -> Mt])
-(defn bind "μ: T^2 -> T" [mv f] (f (:sum mv) (:zins mv) (:lauf mv)))
+(t/ann bind [Mt [t t t t -> Mt] -> Mt])
+(defn bind "μ: T^2 -> T" [mv f n]
+  (f (:sum mv) (:zins mv) (:lauf mv) n))
+
 
 (t/ann laufcalc [t t -> t])
 (defn laufcalc [lauf n] (+ lauf (* n 12)))
 
-(t/ann mlauf [Mt t -> Mt])
-(defn mlauf [mv n]
-  (bind mv (t/fn [s :- t z :- t l :- t]
-             (type-constructor s z (laufcalc l n)))))
+;; (t/ann mlauf [Mt t -> Mt])
+;; (defn mlauf [mv n]
+;;   (bind mv (t/fn [s :- t z :- t l :- t]
+;;              (type-constructor s z (laufcalc l n)))))
+
+(t/ann mlauf [t t t t -> Mt])
+(defn mlauf [s z l n]
+  (unit s z (laufcalc l n)))
 
 (t/ann zinscalc [t t -> t])
 (defn zinscalc [zins n] (+ zins n))
 
-(t/ann mzins [Mt t -> Mt])
-(defn mzins [mv n]
-  (bind mv (t/fn [s :- t z :- t l :- t]
-             (type-constructor s (zinscalc z n) l))))
+;; (t/ann mzins [Mt t -> Mt])
+;; (defn mzins [mv n]
+;;   (bind mv (t/fn [s :- t z :- t l :- t]
+;;              (type-constructor s (zinscalc z n) l))))
+
+(t/ann mzins [t t t t -> Mt])
+(defn mzins [s z l n]
+  (unit s (zinscalc z 2) l))
 
 ;; (def c1 {:sum 100 :zins 50 :lauf 12})
 #_(t/ann c2 Mt)
 (def c2 {:sum 200 :zins 60 :lauf 24})
 
-(-> c2
+#_(-> c2
     (mzins 2)
     (mlauf 1))
