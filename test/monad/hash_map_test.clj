@@ -1,6 +1,6 @@
-(ns monad.struct-test
+(ns monad.hash-map-test
   (:require [clojure.test :refer :all]
-            [monad.struct :refer :all]))
+            [monad.hash-map :refer :all]))
 
 (def s 200)
 (def z 60)

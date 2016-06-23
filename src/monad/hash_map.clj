@@ -1,4 +1,4 @@
-(ns monad.struct
+(ns monad.hash-map
   {:lang :core.typed}
   (:require [clojure.core.typed :as t]))
 
