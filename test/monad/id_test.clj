@@ -18,8 +18,8 @@
 (deftest test-monad-laws-identity
   (testing "Identity law: μ ∘ Tη = μ ∘ ηT = idT"
     ;; (unit x) >>= f ≡ f x
-    (is (= (bind (unit 3) f)
-           (f 3)))
+    (is (= (bind (unit 3) mf)
+           (mf 3)))
     ;; m >>= return ≡ m
-    (= (bind (TypeConstructor 3) unit)
-       (TypeConstructor 3))))
+    (is (= (bind (TypeConstructor 3) unit)
+           (TypeConstructor 3)))))

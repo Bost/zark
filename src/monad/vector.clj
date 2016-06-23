@@ -17,12 +17,6 @@
 ;; (= (bind (bind mv f) g)
 ;;    (bind mv (fn [x] (bind (f x) g))))
 
-
-;; 1. t/Str and String are the same: java.lang.String
-;; 2. * means: any number of params of type t/Any
-(t/defalias t t/Any)
-(t/defalias Mt (t/HVec [t/Any]))
-
 (defn idc [obj]   obj)
 (defn pc  [objp1] 2)
 (defn mc  [objp2] 1)
@@ -56,23 +50,25 @@
   "= G ∘ F; takes set X & returns an underlying set of the free group Free(X)"
   [setX] nil)
 
-(t/ann type-constructor [t -> Mt])
-(def type-constructor
+
+;; 1. t/Str and String are the same: java.lang.String
+;; 2. * means: any number of params of type t/Any
+(t/defalias t t/Any)
+(t/defalias Mt (t/HVec [t/Any]))
+
+(t/ann TypeConstructor [t -> Mt])
+(defn TypeConstructor
   "Endofunctor T: C -> C; t, Mt are objects of Category C"
-  clojure.core/vector)
+  [t]
+  (clojure.core/vector t))
 
 (t/ann unit [t -> Mt])   ;; Fn -> Vec
 (defn unit
   "η: idC -> T; idC is an identity functor on C"
   [n]
-  (type-constructor n))
+  (TypeConstructor n))
 
 (t/ann bind [Mt [t -> Mt] -> Mt])
 (defn bind "μ: T^2 -> T" [mv f]
   (f (first mv)))
 
-(t/ann testf [t -> Mt])
-(defn testf [x] (type-constructor x))
-
-(t/ann testf2 [t -> Mt])
-(defn testf2 [x] (unit x))

@@ -26,7 +26,9 @@
 (t/defalias Mt t/Any)
 
 (t/ann TypeConstructor [t -> Mt])
-(defn TypeConstructor [t] t)
+(defn TypeConstructor
+  "Endofunctor T: C -> C; t, Mt are objects of Category C"
+  [t] t)
 
 (t/ann unit [t -> Mt])   ;; Fn -> Vec
 (defn unit

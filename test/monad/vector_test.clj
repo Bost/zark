@@ -3,7 +3,7 @@
             [monad.vector :refer :all]))
 
 (defn f [x] (+ x x))
-(defn g [x] (+ 1 x))
+(defn g [n] (+ 1 n))
 (defn h [x] 5)
 
 (defn mf [x] (unit (f x)))
@@ -12,13 +12,14 @@
 
 (deftest test-monad-laws-assoc
   (testing "Associativity law: μ ∘ Tμ = μ ∘ μT"
-    (is (= (eval (bind (bind (unit 3) mf) mg))
-           (eval (bind (unit 3) (fn [x] (bind (mf x) mg))))))))
+    (is (= (bind (bind (unit 3) mf) mg)
+           (bind (unit 3) (fn [x] (bind (mf x) mg)))))))
 
 (deftest test-monad-laws-identity
   (testing "Identity law: μ ∘ Tη = μ ∘ ηT = idT"
-    (is (= (eval (bind (unit 3) f))
-           (eval (f 3))))
-    (is (= (eval (bind (unit 3) unit))
-           (eval (unit 3))))))
-
+    ;; (unit x) >>= f ≡ f x
+    (is (= (bind (unit 3) mf)
+           (mf 3)))
+    ;; m >>= return ≡ m
+    (is (= (bind (TypeConstructor 3) unit)
+           (TypeConstructor 3)))))
