@@ -17,11 +17,8 @@
 ;; (= (bind (bind mv f) g)
 ;;    (bind mv (fn [x] (bind (f x) g))))
 
-
 ;; 1. t/Str and String are the same: java.lang.String
 ;; 2. * means: any number of params of type t/Any
-
-;; "Endofunctor T: C -> C; t, Mt are objects of Category C"
 (t/defalias t t/Any)
 (t/defalias Mt t/Any)
 
@@ -33,8 +30,7 @@
 (t/ann unit [t -> Mt])   ;; Fn -> Vec
 (defn unit
   "η: idC -> T; idC is an identity functor on C"
-  [n]
-  (TypeConstructor n))
+  [n] (TypeConstructor n))
 
 (t/ann bind [Mt [t -> Mt] -> Mt])
 (defn bind "μ: T^2 -> T" [mv f] (f mv))

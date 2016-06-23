@@ -9,22 +9,8 @@
 
 ;; 1. t/Str and String are the same: java.lang.String
 ;; 2. * means: any number of params of type t/Any
-;; (t/defalias t t/Any)
-;; (t/defalias Mt (t/HVec [t/Any]))
-
-;; (t/ann type-constructor [t -> Mt])
-;; (def type-constructor
-;;   "endofunctor T: C -> C;  - t, Mt are objects of Category C"
-;;   clojure.core/vector)
-
-;; (t/ann unit [t -> Mt])
-;; (defn unit
-;;   "η: idC -> T; idC is an identity functor on C"
-;;   [n]
-;;   (type-constructor n))
-
 (t/defalias t t/Int)
-(t/defalias k clojure.lang.Keyword)
+(t/defalias k clojure.lang.Keyword) ;; TODO use k insead of keywords
 
 (t/defalias Mt
   #_{:sum 0 :zins 0 :lauf 0}
@@ -38,9 +24,9 @@
   [s z l] {:sum s :zins z :lauf l})
 
 (t/ann unit [t t t -> Mt])
-(defn unit [s z l]
+(defn unit
   "η: idC -> T; idC is an identity functor on C"
-  (TypeConstructor s z l))
+  [s z l] (TypeConstructor s z l))
 
 (t/ann bind [Mt [t t t -> Mt] -> Mt])
 (defn bind "μ: T^2 -> T" [mv f]

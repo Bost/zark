@@ -23,19 +23,16 @@
 (t/defalias t t/Any)
 (t/defalias Mt [-> t])
 
-;; (t/ann type-constructor [t -> Mt])
-;; (def type-constructor
-;;   "Endofunctor T: C -> C; t, Mt are objects of Category C"
-;;   ???)
+(t/ann TypeConstructor [t -> Mt])
+(defn TypeConstructor
+  "Endofunctor T: C -> C; t, Mt are objects of Category C"
+  [t] (fn [] t))
 
 (t/ann unit [t -> Mt])   ;; Fn -> Vec
 (defn unit
   "η: idC -> T; idC is an identity functor on C"
-  [n]
-  (fn [] n))
+  [n] (TypeConstructor n))
 
 (t/ann bind [Mt [t -> Mt] -> Mt])
 (defn bind "μ: T^2 -> T" [mv f] (f (mv)))
 
-(t/ann testf [t -> Mt])
-(defn testf [x] x (unit x))

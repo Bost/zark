@@ -59,14 +59,12 @@
 (t/ann TypeConstructor [t -> Mt])
 (defn TypeConstructor
   "Endofunctor T: C -> C; t, Mt are objects of Category C"
-  [t]
-  (clojure.core/vector t))
+  [t] (clojure.core/vector t))
 
 (t/ann unit [t -> Mt])   ;; Fn -> Vec
 (defn unit
   "η: idC -> T; idC is an identity functor on C"
-  [n]
-  (TypeConstructor n))
+  [n] (TypeConstructor n))
 
 (t/ann bind [Mt [t -> Mt] -> Mt])
 (defn bind "μ: T^2 -> T" [mv f]

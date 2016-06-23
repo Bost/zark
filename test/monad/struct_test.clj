@@ -19,8 +19,6 @@
                    (bind (mzins ss zz ll x)
                          (fn [sss zzz lll] (mlauf sss zzz lll y)))))))))
 
-
-
 (deftest test-monad-laws-identity
   (testing "Identity law: μ ∘ Tη = μ ∘ ηT = idT"
     ;; (unit x) >>= f ≡ f x
