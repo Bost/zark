@@ -32,51 +32,42 @@
                       :zins t
                       :lauf t} :complete? true))
 
-(def type-constructor
+(t/ann TypeConstructor [t t t -> Mt])
+(defn TypeConstructor
   "Endofunctor T: C -> C; t, Mt are objects of Category C"
-  (t/fn [s :- t z :- t l :- t] :- Mt
-    ;; this doesn't work
-    #_(clojure.core/hash-map :sum s :zins z :lauf l)
-    {:sum s :zins z :lauf l}))
+  [s z l] {:sum s :zins z :lauf l})
 
 (t/ann unit [t t t -> Mt])
 (defn unit [s z l]
   "η: idC -> T; idC is an identity functor on C"
-  (type-constructor s z l))
+  (TypeConstructor s z l))
 
-(t/ann bind [Mt [t t t t -> Mt] -> Mt])
-(defn bind "μ: T^2 -> T" [mv f n]
-  (f (:sum mv) (:zins mv) (:lauf mv) n))
-
+(t/ann bind [Mt [t t t -> Mt] -> Mt])
+(defn bind "μ: T^2 -> T" [mv f]
+  (f (:sum mv) (:zins mv) (:lauf mv)))
 
 (t/ann laufcalc [t t -> t])
-(defn laufcalc [lauf n] (+ lauf (* n 12)))
-
-;; (t/ann mlauf [Mt t -> Mt])
-;; (defn mlauf [mv n]
-;;   (bind mv (t/fn [s :- t z :- t l :- t]
-;;              (type-constructor s z (laufcalc l n)))))
+(defn laufcalc [l n] (+ l (* n 12)))
 
 (t/ann mlauf [t t t t -> Mt])
 (defn mlauf [s z l n]
   (unit s z (laufcalc l n)))
 
-(t/ann zinscalc [t t -> t])
-(defn zinscalc [zins n] (+ zins n))
+(t/ann bmlauf [Mt t -> Mt])
+(defn bmlauf [mv n]
+  (bind mv (t/fn [s :- t z :- t l :- t] (mlauf s z l n))))
 
-;; (t/ann mzins [Mt t -> Mt])
-;; (defn mzins [mv n]
-;;   (bind mv (t/fn [s :- t z :- t l :- t]
-;;              (type-constructor s (zinscalc z n) l))))
+(t/ann zinscalc [t t -> t])
+(defn zinscalc [z n] (+ z n))
 
 (t/ann mzins [t t t t -> Mt])
 (defn mzins [s z l n]
-  (unit s (zinscalc z 2) l))
+  (unit s (zinscalc z n) l))
 
-;; (def c1 {:sum 100 :zins 50 :lauf 12})
-#_(t/ann c2 Mt)
-(def c2 {:sum 200 :zins 60 :lauf 24})
+(t/ann bmzins [Mt t -> Mt])
+(defn bmzins [mv n]
+  (bind mv (t/fn [s :- t z :- t l :- t] (mzins s z l n))))
 
-#_(-> c2
-    (mzins 2)
-    (mlauf 1))
+(-> (unit 200 60 24)
+    (bmzins 2)
+    (bmlauf 1))
