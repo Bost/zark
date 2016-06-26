@@ -13,6 +13,6 @@
    ]
   :plugins
   [[lein-cljfmt "0.2.0"]]
-  ;; TODO: uncomment this for autorun :main zark.core
-  ;; This namespace will get loaded automatically when you launch a repl.
+  ;; TODO: uncomment for autorun :main zark.core
+  ;; The namespace will be auto loaded when a repl is started.
   )

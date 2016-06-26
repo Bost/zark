@@ -1,4 +1,7 @@
-(ns zark.ycombinator)
+(ns ^{:doc
+      "Higher order fn satisfying:
+ y f = f (y f) for all f"}
+    zark.ycombinator)
 
 "Print evaluated expression and return its res"
 (defmacro dbg [x]

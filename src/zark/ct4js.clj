@@ -1,4 +1,7 @@
-(ns zark.category-theory)
+(ns ^{:doc "According to Category theory for JavaScript programmers by Mike
+      Stay: https://youtu.be/-FkgOHvNAU8"}
+    zark.ct4js)
+
 
 (defn c-str
   "Contract for java.lang.String objects in memory.

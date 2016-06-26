@@ -1,10 +1,7 @@
 (ns zark.category-theory-test
   (:require [clojure.test :refer :all]
-            [zark.category-theory :refer :all])
-  ;; `defprotocol` creates a real Var, which you can `use` or `refer` just like a function.
-  ;; `deftype` and `defrecord` both create classes, which you must `import` using the class name.
-  ;; Class names have to be compatible with Java, so dashes are converted to underscores.
-  (:import [zark.category_theory None Some]))
+            [zark.ct4js :refer :all])
+  (:import [zark.ct4js None Some]))
 
 (deftest test-contract-basic
   (testing "Contract for Strings, Numbers, Booleans"

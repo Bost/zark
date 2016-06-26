@@ -1,4 +1,4 @@
-(ns zark.core
+(ns zark.datomic
   (:use [datomic.api :only [db q] :as d]))
 
 (comment
@@ -149,4 +149,3 @@
      "zark.core/z"))
 
 (go)
-
