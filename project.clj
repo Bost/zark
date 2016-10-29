@@ -3,29 +3,32 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
-  [
-   [org.clojure/clojure "1.8.0"]
-   [com.datomic/datomic-free "0.9.5372" :exclusions [joda-time]]
-   [org.clojure/core.logic "0.8.10"]
-   [org.clojure/algo.monads "0.1.5"]
+  [[org.clojure/clojure "1.9.0-alpha14"]
+   [com.datomic/datomic-free "0.9.5407" :exclusions [joda-time]]
+   [org.clojure/core.logic "0.8.11"]
+   [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.7.2"] ; hiccup style templating for om-next
+   [sablono "0.7.5"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [org.clojure/clojurescript "1.9.89"]
+   [org.clojure/clojurescript "1.9.293" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.4.0"] ; more convenient dom elements
-   [org.omcljs/om "1.0.0-alpha22"]
-   ;;  describe how a web server communicates with web apps, and how web apps can be chained together to process one request
-   [ring "1.5.0"] ; low-level interface and library for web apps
-   [compojure "1.5.1"]
+   [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]]
+   ;; describe how a web server communicates with web apps
+   ;; and how web apps can be chained together to process one request
+   [ring "1.5.0" ;; low-level interface and library for web apps
+    :exclusions [commons-codec]]
+   [compojure "1.5.1"
+    :exclusions [commons-codec org.clojure/tools.macro]]
+
    [com.andrewmcveigh/cljs-time "0.4.0"] ; (time/now)
    ;; webapp - end
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
-   [org.clojure/core.contracts "0.0.5"]
+   [org.clojure/core.contracts "0.0.6"]
    [org.clojure/core.memoize "0.5.9"]
 
    ;; [org.clojure/core.match "0.3.0-alpha4"] ; pattern matching library
@@ -40,17 +43,18 @@
    ;; [com.draines/postal "1.11.3"]            ; sending emails
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
-   [funcool/cuerdas "0.7.2"] ; string manipulation - (str/surround % "'")
+   [funcool/cuerdas "2.0.0"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
    [org.clojure/core.typed "0.3.28"]
 
-   ;; Kestrel - distributed message queue on the JVM
-   ;; [cauchy-jobs-kestrel "0.1.0"]
+   ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
+
+   [latte "0.3.7-SNAPSHOT"] ; a Laboratory for Type Theory Experiments
    ]
   :plugins
   [[lein-cljsbuild "1.1.3"]
-   [lein-figwheel "0.5.4-5"]
+   [lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
    #_[cider/cider-nrepl "0.11.0"]]
   ;; TODO: uncomment for autorun :main zark.core
@@ -71,8 +75,7 @@
    ;; Load CIDER, refactor-nrepl and piggieback middleware
    :nrepl-middleware ["cider.nrepl/cider-middleware"
                       "refactor-nrepl.middleware/wrap-refactor"
-                      "cemerick.piggieback/wrap-cljs-repl"]
-   }
+                      "cemerick.piggieback/wrap-cljs-repl"]}
 
   :cljsbuild
   {:builds [{:id "dev"
@@ -82,14 +85,18 @@
                         :output-dir "resources/public/js/out"
                         :main #_ufo.client zark.core
                         :asset-path "js/out"
-                        :optimizations :none
-                        :source-map true ; for debugging ClojureScript directly in the browser
-                        }}]}
+                        :source-map true ; debug ClojureScript in the browser
+                        :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.4-5"]
-                        #_[lein-figwheel "0.5.4-5"]
+   :dev {:dependencies [[figwheel-sidecar "0.5.8"
+                         :exclusions [com.google.guava/guava
+                                      commons-codec
+                                      org.clojure/tools.analyzer
+                                      org.clojure/tools.analyzer.jvm]]
+                        [org.clojure/test.check "0.9.0"] ; for clojure.spec
                         [com.cemerick/piggieback "0.2.1"]
                         [org.clojure/tools.nrepl "0.2.12"]]
-         :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+         ;; Leads to Error loading cemerick.piggieback ... /queue-eval is not public
+         ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
          :source-paths ["src/cljs" "src/clj"]}})
