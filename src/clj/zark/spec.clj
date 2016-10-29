@@ -1,5 +1,7 @@
 (ns zark.spec
-  (:require [clojure.spec :as s]))
+  (:require [clojure.spec.gen :as gen]
+            [clojure.spec.test :as stest] ;; for instrumentation
+            [clojure.spec :as s]))
 
 ;; keyword beginning with two colons is resolved in the current namespace
 ;; i.e. ::rect is read as :zark.spec/rect
@@ -73,7 +75,7 @@
 (defn ranged-rand
   "Returns random int in range start <= rand < end"
   [start end]
-  (+ 10 start (long (rand (- end start)))))
+  (+ start (long (rand (- end start)))))
 
 (s/fdef ranged-rand
         :args (s/and (s/cat :start int? :end int?)
@@ -82,8 +84,8 @@
         :fn (s/and #(>= (:ret %) (-> % :args :start))
                    #(< (:ret %) (-> % :args :end))))
 
-(ranged-rand 3 5)
-
+(ranged-rand 3 5) ;;=> 13
+;; (ranged-rand 5 3) ;;=> Error
 
 (defn adder [x] #(+ x %))
 
@@ -92,3 +94,40 @@
         :ret (s/fspec :args (s/cat :y number?)
                       :ret number?)
         :fn #(= (-> % :args :x) ((:ret %) 0)))
+
+
+(gen/generate (s/gen int?)) ;;=> 311
+
+;; s/and order of arguments is important:
+(gen/generate (s/gen (s/and int? even?))) ;;=> -80
+;; (gen/generate (s/gen (s/and even? int?))) ;;=> Unable to construct gen at: [] for: even?
+
+;; TODO take a look at how to create custom generators
+
+
+(s/exercise-fn `ranged-rand)
+;; =>
+;; ([(-2 -1)   -2]
+;;  [(-3 3)     0]
+;;  [(0 1)      0]
+;;  [(-8 -7)   -8]
+;;  [(3 13)     7]
+;;  [(-1 0)    -1]
+;;  [(-69 99) -41]
+;;  [(-19 -1)  -5]
+;;  [(-1 1)    -1]
+;;  [(0 65)     7])
+
+
+;; Instrumentation validates that the :args spec is being invoked on
+;; instrumented fns and thus provides validation for external uses of a fn.
+(stest/instrument `ranged-rand) ;;=> [zark.spec/ranged-rand]
+(ranged-rand 3 5) ;;=> 13
+;; (ranged-rand 5 3) ;;=> Error
+
+#_(defn ranged-rand  ;; BROKEN!
+  "Returns random int in range start <= rand < end"
+  [start end]
+  (+ start (long (rand (- start end)))))
+
+(stest/abbrev-result (first (stest/check `ranged-rand)))
