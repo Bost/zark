@@ -50,7 +50,10 @@
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
-   [latte "0.3.7-SNAPSHOT"] ; a Laboratory for Type Theory Experiments
+   ;; Laboratory for Type Theory Experiments
+   [latte "0.3.7-SNAPSHOT"]
+   ;; Formalization of (typed) Set theory in LaTTe.
+   [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
    ]
   :plugins
   [[lein-cljsbuild "1.1.3"]
