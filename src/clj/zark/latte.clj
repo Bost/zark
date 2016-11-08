@@ -1,6 +1,6 @@
 (ns zark.latte
   "This is a talk about LaTTe given @ Euroclojure 2016."
-   ;; These belong to logic ;-)
+  ;; These belong to logic ;-)
   (:refer-clojure :exclude [and or not])
   ;; LaTTe core and main top-level forms
   (:require [latte.core :as latte
@@ -12,7 +12,11 @@
             ;; ... the "standard" library (propositions, quantifiers and equality)
             [latte.prop :as p :refer [<=> and or not]]
             [latte.quant :as q :refer [exists]]
-            [latte.equal :as eq :refer [equal]]))
+            [latte.equal :as eq :refer [equal]]
+
+            [clojure.spec.gen :as gen]
+            [clojure.spec.test :as stest] ;; for instrumentation
+            [clojure.spec :as s]))
 
 
 ;; see latte.kernel.presyntax (def +reserved-symbols+ '#{□ ✳ λ Π ⟶ ∃ ∀})
@@ -85,3 +89,29 @@
     "Now we can use <a> as a function"
     (have <d> A :by (<a> <c>))
     (qed <d>)))
+
+(defthm impl-refl
+  "Implication is reflexive."
+  [[A :type]]
+  (==> A A))
+
+(proof impl-refl :term (lambda [x A] x))
+
+(proof impl-refl
+    :script
+  (assume [x A]
+    (have concl A :by x)
+    (qed concl)))
+
+(defn score [creature test-data]
+  (try
+    (let [problems (:clojure.spec/problems
+                    (s/explain-data (eval (:program creature)) test-data))]
+      (if problems
+        (assoc creature :score (get-in problems [0 :in 0]))
+        (assoc creature :score 100)))
+    (catch Throwable e (assoc creature :score 0))))
+
+(s/def ::proof list?) ;; TODO specify ::proof
+(s/explain-data (s/cat :0 ::proof) ['(proof impl-refl :term (lambda [x A] x))])
+(score {:program '(s/cat :0 ::proof) :score 0} ['(proof impl-refl :term (lambda [x A] x))])
