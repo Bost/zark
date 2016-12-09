@@ -4,12 +4,12 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
   [[org.clojure/clojure "1.9.0-alpha14"]
-   [com.datomic/datomic-free "0.9.5407" :exclusions [joda-time]]
+   [com.datomic/datomic-free "0.9.5544" :exclusions [joda-time]]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.7.5"] ; hiccup style templating for om-next
+   [sablono "0.7.6"] ; hiccup style templating for om-next
 
    ;; webapp - begin
    [org.clojure/clojurescript "1.9.293" :exclusions [com.google.guava/guava]]
@@ -36,14 +36,14 @@
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
    [clojurewerkz/quartzite "2.0.0"] ; scheduling
-   [clj-time "0.12.0"]
+   [clj-time "0.12.2"]
    ;; [korma "0.4.0"] ;; sql for clojure
    ;; [onelog "0.4.5"]  ;; used also by ring
 
    ;; [com.draines/postal "1.11.3"]            ; sending emails
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
-   [funcool/cuerdas "2.0.0"] ; string manipulation - (str/surround % "'")
+   [funcool/cuerdas "2.0.1"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
    [org.clojure/core.typed "0.3.28"]
