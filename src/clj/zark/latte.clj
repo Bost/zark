@@ -14,10 +14,12 @@
             [latte.quant :as q :refer [exists]]
             [latte.equal :as eq :refer [equal]]
 
+            [clojure.core :as c]
+            ;; [clojure.set :as set]
+            [clojure.walk :as walk]
             [clojure.spec.gen :as gen]
             [clojure.spec.test :as stest] ;; for instrumentation
             [clojure.spec :as s]))
-
 
 ;; see latte.kernel.presyntax (def +reserved-symbols+ '#{□ ✳ λ Π ⟶ ∃ ∀})
 (term
@@ -103,6 +105,7 @@
     (have concl A :by x)
     (qed concl)))
 
+;; https://github.com/gigasquid/genetic-programming-spec
 (defn score [creature test-data]
   (try
     (let [problems (:clojure.spec/problems
@@ -112,6 +115,125 @@
         (assoc creature :score 100)))
     (catch Throwable e (assoc creature :score 0))))
 
+(def preds ['integer? 'string? 'boolean? '(s/and integer? even?) '(s/and integer? odd?)])
+(def seqs ['s/+ 's/*])
+(def and-ors ['s/and 's/or])
+
+(def seq-prob 0.3)
+(def nest-prob 0.00)
+(def max-depth 4)
+(def and-or-prob 0.85)
+
+(defn make-random-seq [n]
+  (cond
+    (< (rand) nest-prob)
+    `(s/spec (~(rand-nth seqs) ~(make-random-arg (dec n))))
+
+    (< (rand) and-or-prob)
+    `(~(rand-nth and-ors) ~(make-random-arg (dec n)) ~(make-random-arg (dec n)))
+
+    :else
+    `(~(rand-nth seqs) ~(make-random-arg (dec n)))))
+
+(defn make-random-arg [n]
+  (if (c/and (pos? n) (< (rand) seq-prob))
+    (make-random-seq n)
+    (rand-nth preds)))
+
+(defn make-random-cat [len]
+  (let [args (reduce (fn [r i]
+                       (conj r (keyword (str i))
+                             (make-random-arg max-depth)))
+                     []
+                     (range len))]
+    `(s/cat ~@args)))
+
+(defn initial-population [popsize max-cat-length]
+  (for [i (range popsize)]
+    {:program (make-random-cat (inc (rand-int max-cat-length)))}))
+
+(defn mutable? [node]
+  (c/or (when (seq? node)
+        (contains? (clojure.set/union (set seqs) #{'clojure.spec/spec}) (first node)))
+      (contains? (set preds) node)))
+(def mutate-prob 0.1)
+
+(defn mutate
+  "Ofter it generates the same over and over again"
+  [creature]
+  (let [program (:program creature)
+        mutated-program (walk/postwalk
+                         (fn [x] (if (c/and (mutable? x) (< (rand) mutate-prob))
+                                   (make-random-arg max-depth)
+                                   x)) program)]
+    (assoc creature :program mutated-program)))
+
+#_(mutate {:program '(clojure.spec/cat :0 (s/and integer? odd?) :1 integer?)})
+
+(def crossover-prob 0.7)
+
+(defn crossover [creature1 creature2]
+  (let [program1 (:program creature1)
+        program2 (:program creature2)
+        chosen-node (first (walk/walk
+                            #(when
+                                 (c/and (< (rand) crossover-prob)
+                                      (mutable? %))
+                               %)
+                            #(remove nil? %) program1))
+        crossed-over? (atom false)
+        crossover-program (if chosen-node
+                            (walk/postwalk
+                             (fn [x]
+                               (if (c/and (mutable? x)
+                                        (< (rand) crossover-prob)
+                                        (c/not @crossed-over?))
+                                 (do (reset! crossed-over? true) chosen-node)
+                                 x))
+                             program2)
+                            program2)]
+    {:program crossover-program}))
+
+#_(crossover {:program '(clojure.spec/cat :0 (s/and integer? odd?) :1 integer?)}
+           {:program '(clojure.spec/cat :0 string? :1 boolean?)})
+
+
+(defn select-best [creatures tournament-size]
+  (let [selected (repeatedly tournament-size #(rand-nth creatures))]
+    (-> (sort-by :score selected) reverse first)))
+
+(defn perfect-fit [creatures]
+  (first (filter #(= 100 (:score %)) creatures)))
+
+(def new-node-prob 0.05)
+(def max-depth 4)
+
+(defn evolve [pop-size max-gen tournament-size test-data]
+  (loop [n max-gen
+         creatures (initial-population pop-size (count test-data))]
+    (println "generation " (- max-gen n))
+    (let [scored-creatures (map (fn [creature] (score creature test-data)) creatures)]
+     (if (c/or (zero? n) (perfect-fit scored-creatures))
+       scored-creatures
+       (let [elites (take 2 (reverse (sort-by :score scored-creatures)))
+             new-creatures (for [i (range (- (count creatures) 2))]
+                             ;; add a random node to improve diversity
+                             (if (< (rand) new-node-prob)
+                               {:program (make-random-cat (count test-data))}
+                               (let [creature1 (select-best scored-creatures tournament-size)
+                                     creature2 (select-best scored-creatures tournament-size)]
+                                 (mutate (crossover creature1 creature2)))))]
+         (println "best-scores" (map :score elites))
+         (recur (dec n) (into new-creatures elites)))))))
+
+(def creature-specs (evolve 100 100 7 ["hi" true 5 10 "boo"]))
+
+#_(perfect-fit creature-specs)
+
+;; runs very long
+#_(s/exercise (eval (:program (perfect-fit creature-specs))) 5)
+
 (s/def ::proof list?) ;; TODO specify ::proof
 (s/explain-data (s/cat :0 ::proof) ['(proof impl-refl :term (lambda [x A] x))])
-(score {:program '(s/cat :0 ::proof) :score 0} ['(proof impl-refl :term (lambda [x A] x))])
+(score {:program '(s/cat :0 ::proof) :score 0}
+       ['(proof impl-refl :term (lambda [x A] x))])
