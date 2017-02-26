@@ -228,14 +228,26 @@
          (println "best-scores" (map :score elites))
          (recur (dec n) (into new-creatures elites)))))))
 
-(def creature-specs (evolve 100 100 7 ["hi" true 5 10 "boo"]))
+;; (def creature-specs (evolve 100 100 7 ["hi" true 5 10 "boo"]))
 
 #_(perfect-fit creature-specs)
 
 ;; runs very long
 #_(s/exercise (eval (:program (perfect-fit creature-specs))) 5)
 
-(s/def ::proof list?) ;; TODO specify ::proof
-(s/explain-data (s/cat :0 ::proof) ['(proof impl-refl :term (lambda [x A] x))])
-(score {:program '(s/cat :0 ::proof) :score 0}
-       ['(proof impl-refl :term (lambda [x A] x))])
+(s/def ::proof-type (s/and vector?
+                           (fn [v] (= :qed (first v)))
+                           (fn [v] (symbol? (second v)))))
+
+(defn construct-pterm
+  "Construct proof definition with its proof-term for a given theorem.
+  Example: (construct-pterm 'impl-refl)
+  => (proof impl-refl :term (lambda [x A] x))"
+  [theorem-name]
+  (list 'proof theorem-name ':term
+        ;; TODO construct the proof term
+        '(lambda [x A] x)))
+
+(s/explain-data (s/cat :0 ::proof-type) [(eval (construct-pterm 'impl-refl))])
+(score {:program '(s/cat :0 ::proof-type) :score 0}
+       [(eval (construct-pterm 'impl-refl))])
