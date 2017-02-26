@@ -124,6 +124,8 @@
 (def max-depth 4)
 (def and-or-prob 0.85)
 
+(declare make-random-arg) ; forward declaration
+
 (defn make-random-seq [n]
   (cond
     (< (rand) nest-prob)
