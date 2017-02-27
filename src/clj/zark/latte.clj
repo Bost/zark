@@ -87,6 +87,7 @@
     (assume [x A
              y B]
       (have <b> A :by x)
+      ;; Shouldn't it be (λ [x A] (λ [y B] x)) ???
       (have <c> (==> A B A) :discharge [x y <b>])) ;; (λ [x A] (λ [x B] x))
     "Now we can use <a> as a function"
     (have <d> A :by (<a> <c>))
@@ -161,7 +162,7 @@
 (def mutate-prob 0.1)
 
 (defn mutate
-  "Ofter it generates the same over and over again"
+  "More often than not it generates the same over and over again"
   [creature]
   (let [program (:program creature)
         mutated-program (walk/postwalk
