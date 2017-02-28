@@ -82,15 +82,15 @@
              (∀ [C :type]
                 (==> (==> A B C)
                      C))"
-    (have <a> (==> (==> A B A) A) :by (p A))
+    (have <f> (==> (==> A B A) A) :by (p A))
     "We need to prove that if A is true and B is true then A is true"
     (assume [x A
              y B]
-      (have <b> A :by x)
+      (have <a> A :by x)
       ;; Shouldn't it be (λ [x A] (λ [y B] x)) ???
-      (have <c> (==> A B A) :discharge [x y <b>])) ;; (λ [x A] (λ [x B] x))
-    "Now we can use <a> as a function"
-    (have <d> A :by (<a> <c>))
+      (have <c> (==> A B A) :discharge [x y <a>])) ;; (λ [x A] (λ [x B] x))
+    "Now we can use <f> as a function"
+    (have <d> A :by (<f> <c>))
     (qed <d>)))
 
 (defthm and-elim-right- ""
@@ -112,9 +112,9 @@
              y B]
       (have <b> B :by y)
       ;; Shouldn't it be (λ [x A] (λ [y B] y)) ???
-      (have <c> (==> A B B) :discharge [x y <b>])) ;; (λ [x A] (λ [y B] y))
+      (have <bb> (==> A B B) :discharge [x y <b>])) ;; (λ [x A] (λ [y B] y))
     "Now we can use <a> as a function"
-    (have <d> B :by (<a> <c>))
+    (have <d> B :by (<a> <bb>))
     (qed <d>)))
 
 (defthm impl-refl
@@ -122,7 +122,7 @@
   [[A :type]]
   (==> A A))
 
-(proof impl-refl :term (lambda [x A] x))
+(proof impl-refl :term (λ [x A] x))
 
 (proof impl-refl
     :script
@@ -131,6 +131,23 @@
   (assume [x A]
     (have concl A :by x)
     (qed concl)))
+
+(defthm impl-ignore
+  "A variant of reflexivity."
+  [[A :type] [B :type]]
+  (==> A B A))
+
+(proof impl-ignore :term (λ [x A] (λ [y B] x)))
+
+(defthm modus-ponens ""
+  [[A :type] [B :type]]
+  (==> A
+       (==> A B)
+       A))
+
+(proof modus-ponens :term (λ [x A] (λ [f (==> A B)] x)))
+
+#_(proof modus-ponens :script "TODO")
 
 ;; https://github.com/gigasquid/genetic-programming-spec
 (defn score [creature test-data]
