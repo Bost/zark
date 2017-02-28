@@ -93,6 +93,30 @@
     (have <d> A :by (<a> <c>))
     (qed <d>)))
 
+(defthm and-elim-right- ""
+  [[A :type] [B :type]]
+  (==> (and- A B)
+       B))
+
+(proof and-elim-right-
+    :script
+  "Our hypothesis"
+  (assume [p (and- A B)]
+    "The starting point: use the definition of conjunction:
+             (∀ [C :type]
+                (==> (==> A B C)
+                     C))"
+    (have <a> (==> (==> A B B) B) :by (p B))
+    "We need to prove that if A is true and B is true then B is true"
+    (assume [x A
+             y B]
+      (have <b> B :by y)
+      ;; Shouldn't it be (λ [x A] (λ [y B] y)) ???
+      (have <c> (==> A B B) :discharge [x y <b>])) ;; (λ [x A] (λ [y B] y))
+    "Now we can use <a> as a function"
+    (have <d> B :by (<a> <c>))
+    (qed <d>)))
+
 (defthm impl-refl
   "Implication is reflexive."
   [[A :type]]
