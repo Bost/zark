@@ -12,7 +12,7 @@
    [sablono "0.7.7"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [org.clojure/clojurescript "1.9.293" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.9.473" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.4.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]]
    ;; describe how a web server communicates with web apps
