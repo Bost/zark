@@ -22,6 +22,8 @@
             [clojure.spec :as s]))
 
 ;; see latte.kernel.presyntax (def +reserved-symbols+ '#{□ ✳ λ Π ⟶ ∃ ∀})
+;; ✳ - type of types (lambda term); type of ✳ is □; ✳ : □
+;; □ - kind (in latte noted as ':type'); the kind ifself has no type
 (term
  (λ [A :type] (λ [x A] x))
  ;; ^^^ (fn [x] x) in LaTTe ^^^
@@ -48,6 +50,11 @@
   (==> (==> A B)  ;; (==> X Y Z) ≡ (==> X (==> Y Z))
        (==> B C)
        (==> A C))))
+
+(∀ [A B C :type]
+ (==> (==> A B
+           C)
+      C))
 
 (definition and-  ;; nameclash!
   "Conjunction in Type Theory"
