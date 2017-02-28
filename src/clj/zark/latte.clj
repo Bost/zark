@@ -102,6 +102,8 @@
 
 (proof impl-refl
     :script
+  "assuming A holds, as an hypothesis named x we can deduce A by x hence A
+  implies A as stated (QED)."
   (assume [x A]
     (have concl A :by x)
     (qed concl)))
