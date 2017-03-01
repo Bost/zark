@@ -94,8 +94,7 @@
     (assume [x A
              y B]
       (have <a> A :by x)
-      ;; Shouldn't it be (λ [x A] (λ [y B] x)) ???
-      (have <c> (==> A B A) :discharge [x y <a>])) ;; (λ [x A] (λ [x B] x))
+      (have <c> (==> A B A) :discharge [x y <a>])) ;; (λ [x A] (λ [y B] x))
     "Now we can use <f> as a function"
     (have <d> A :by (<f> <c>))
     (qed <d>)))
