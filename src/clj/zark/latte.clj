@@ -161,7 +161,13 @@
 
 (proof modus-ponens :term (λ [x A] (λ [f (==> A B)] x)))
 
-#_(proof modus-ponens :script "TODO")
+(proof modus-ponens
+    :script
+  (assume [x A
+           f (==> A B)]
+    (have <a> A :by x)
+    (have <c> (==> A (==> A B) A) :discharge [x f <a>])
+    (qed <c>)))
 
 ;; https://github.com/gigasquid/genetic-programming-spec
 (defn score [creature test-data]
