@@ -31,11 +31,9 @@
 
 (type-check?
  ;; the lambda-term:
- (λ [A :type]
-    (λ [x A] x))
+ (λ [A :type] (λ [x A] x))
  ;; is of type ...
- (∀ [A :type]
-  (==> A A)))
+ (∀ [A :type] (==> A A)))
 
 (type-check?
  ;; the lambda-term:
@@ -137,6 +135,22 @@
 
 (proof modus-ponens :term (λ [f (==> A B)] (λ [x A] (f x))))
 
+(term (λ [A B :type] (λ [f (==> A B)] (λ [x A] (f x)))))
+#_
+(λ [A ✳]
+  (λ [B ✳]
+    (λ [f (Π [⇧ A] B)] (λ [x A] [f x]))))
+
+(term (∀ [A B :type] (==> (==> A B) A B)))
+#_
+(Π [A ✳]
+  (Π [B ✳]
+    (Π [⇧ (Π [⇧ A] B)] (Π [⇧ A] B))))
+
+(type-check?
+  (λ [A B :type] (λ [f (==> A B)] (λ [x A] (f x))))
+  (∀ [A B :type] (==> (==> A B) A B)))
+
 (proof modus-ponens :script
   (assume [Hypothesis (==> A B)
            x A]
@@ -147,10 +161,20 @@
 (defthm modus-tollens "Denying the consequent"
   [[A :type] [B :type]] (==> (==> A B) (not A) (not B)))
 
+(term (∀ [A B :type] (==> (==> A B) (not A) (not B))))
 #_
-(term
-  (λ [A B :type]
-    (λ [f (==> A B)] (λ [x (not A)] x))))
+(Π [A ✳]
+  (Π [B ✳]
+    (Π [⇧ (Π [⇧ A] B)]
+      (Π [⇧ (#'latte.prop/not A)]
+        (#'latte.prop/not B)))))
+
+(term (λ [A B :type] (λ [f (==> A B)] (λ [x (not A)] x))))
+#_
+(λ [A ✳]
+  (λ [B ✳]
+    (λ [f (Π [⇧ A] B)]
+      (λ [x (#'latte.prop/not A)] x))))
 #_
 (proof modus-tollens :term ...)
 
