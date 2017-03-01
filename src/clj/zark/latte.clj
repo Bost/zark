@@ -117,7 +117,6 @@
     (assume [x A
              y B]
       (have <b> B :by y)
-      ;; Shouldn't it be (λ [x A] (λ [y B] y)) ???
       (have <bb> (==> A B B) :discharge [x y <b>])) ;; (λ [x A] (λ [y B] y))
     "Now we can use <a> as a function"
     (have <d> B :by (<a> <bb>))
@@ -135,7 +134,7 @@
   "assuming A holds, as an hypothesis named x we can deduce A by x hence A
   implies A as stated (QED)."
   (assume [x A]
-    (have concl A :by x)
+    (have concl A :by x) ;; internally (λ [x A] x) is created
     (qed concl)))
 
 (defthm impl-ignore
@@ -153,21 +152,18 @@
     (have <c> (==> A B A) :discharge [x y <a>])
     (qed <c>)))
 
-(defthm modus-ponens ""
+(defthm modus-ponens "Implication elimination"
   [[A :type] [B :type]]
-  (==> A
-       (==> A B)
-       A))
+  (==> (==> A B) A B))
 
-(proof modus-ponens :term (λ [x A] (λ [f (==> A B)] x)))
+(proof modus-ponens :term (λ [f (==> A B)] (λ [x A] (f x))))
 
 (proof modus-ponens
     :script
-  (assume [x A
-           f (==> A B)]
-    (have <a> A :by x)
-    (have <c> (==> A (==> A B) A) :discharge [x f <a>])
-    (qed <c>)))
+  (assume [Hypothesis (==> A B)
+           x A]
+    (have concl B :by (Hypothesis x))
+    (qed concl)))
 
 ;; https://github.com/gigasquid/genetic-programming-spec
 (defn score [creature test-data]
