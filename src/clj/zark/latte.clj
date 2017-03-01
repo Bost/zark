@@ -51,11 +51,6 @@
        (==> B C)
        (==> A C))))
 
-(∀ [A B C :type]
- (==> (==> A B
-           C)
-      C))
-
 (definition and-  ;; nameclash!
   "Conjunction in Type Theory"
   [[A :type] [B :type]]
@@ -64,25 +59,19 @@
         C)))
 
 (defthm and-intro- ""
-  [[A :type] [B :type]]
-  (==> A B
-       (and- A B)))
+  [[A :type] [B :type]] (==> A B (and- A B)))
 
-(proof and-intro-
-    :term
+(proof and-intro- :term
   (λ [x A]
     (λ [y B]
-       (λ [C :type]
-          (λ [f (==> A B C)]
-             ((f x) y))))))
+      (λ [C :type]
+        (λ [f (==> A B C)]
+          ((f x) y))))))
 
 (defthm and-elim-left- ""
-  [[A :type] [B :type]]
-  (==> (and- A B)
-       A))
+  [[A :type] [B :type]] (==> (and- A B) A))
 
-(proof and-elim-left-
-    :script
+(proof and-elim-left- :script
   "Our hypothesis"
   (assume [p (and- A B)]
     "The starting point: use the definition of conjunction:
@@ -100,12 +89,9 @@
     (qed <d>)))
 
 (defthm and-elim-right- ""
-  [[A :type] [B :type]]
-  (==> (and- A B)
-       B))
+  [[A :type] [B :type]] (==> (and- A B) B))
 
-(proof and-elim-right-
-    :script
+(proof and-elim-right- :script
   "Our hypothesis"
   (assume [p (and- A B)]
     "The starting point: use the definition of conjunction:
@@ -122,30 +108,24 @@
     (have <d> B :by (<a> <bb>))
     (qed <d>)))
 
-(defthm impl-refl
-  "Implication is reflexive."
-  [[A :type]]
-  (==> A A))
+(defthm impl-refl "Implication is reflexive."
+  [[A :type]] (==> A A))
 
 (proof impl-refl :term (λ [x A] x))
 
-(proof impl-refl
-    :script
+(proof impl-refl :script
   "assuming A holds, as an hypothesis named x we can deduce A by x hence A
   implies A as stated (QED)."
   (assume [x A]
     (have concl A :by x) ;; internally (λ [x A] x) is created
     (qed concl)))
 
-(defthm impl-ignore
-  "A variant of reflexivity."
-  [[A :type] [B :type]]
-  (==> A B A))
+(defthm impl-ignore "A variant of reflexivity."
+  [[A :type] [B :type]] (==> A B A))
 
 (proof impl-ignore :term (λ [x A] (λ [y B] x)))
 
-(proof impl-ignore
-  :script
+(proof impl-ignore :script
   (assume [x A
            y B]
     (have <a> A :by x)
@@ -153,13 +133,11 @@
     (qed <c>)))
 
 (defthm modus-ponens "Implication elimination"
-  [[A :type] [B :type]]
-  (==> (==> A B) A B))
+  [[A :type] [B :type]] (==> (==> A B) A B))
 
 (proof modus-ponens :term (λ [f (==> A B)] (λ [x A] (f x))))
 
-(proof modus-ponens
-    :script
+(proof modus-ponens :script
   (assume [Hypothesis (==> A B)
            x A]
     (have concl B :by (Hypothesis x))
