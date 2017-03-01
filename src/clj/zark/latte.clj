@@ -143,6 +143,20 @@
     (have concl B :by (Hypothesis x))
     (qed concl)))
 
+;; see defthm or-not-impl-elim
+(defthm modus-tollens "Denying the consequent"
+  [[A :type] [B :type]] (==> (==> A B) (not A) (not B)))
+
+#_
+(term
+  (λ [A B :type]
+    (λ [f (==> A B)] (λ [x (not A)] x))))
+#_
+(proof modus-tollens :term ...)
+
+#_
+(proof modus-tollens :script ...)
+
 ;; https://github.com/gigasquid/genetic-programming-spec
 (defn score [creature test-data]
   (try
