@@ -145,6 +145,14 @@
 
 (proof impl-ignore :term (λ [x A] (λ [y B] x)))
 
+(proof impl-ignore
+  :script
+  (assume [x A
+           y B]
+    (have <a> A :by x)
+    (have <c> (==> A B A) :discharge [x y <a>])
+    (qed <c>)))
+
 (defthm modus-ponens ""
   [[A :type] [B :type]]
   (==> A
