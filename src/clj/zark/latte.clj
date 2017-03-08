@@ -91,6 +91,8 @@
 
 (proof and-elim-right- :script
   "Our hypothesis"
+  ;; i.e assume A, B are true and p is the witness; i.e I suppose I have
+  ;; a lambda term to prove
   (assume [p (and- A B)]
     "The starting point: use the definition of conjunction:
              (∀ [C :type]
@@ -100,7 +102,10 @@
     "We need to prove that if A is true and B is true then B is true"
     (assume [x A
              y B]
-      (have <b> B :by y)
+      (have <b> B :by y) ; 'have' is a construct to make a proof step
+      ;; :by is followed by a lambda temp
+      ;; :discharge internally creates a lambda term (λ [x A] (λ [y B] <b>))
+      ;; <b> is in fact x
       (have <bb> (==> A B B) :discharge [x y <b>])) ;; (λ [x A] (λ [y B] y))
     "Now we can use <a> as a function"
     (have <d> B :by (<a> <bb>))
