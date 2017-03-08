@@ -12,7 +12,7 @@
    [sablono "0.7.7"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [org.clojure/clojurescript "1.9.473" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.9.495" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.4.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]]
    ;; describe how a web server communicates with web apps
@@ -55,15 +55,15 @@
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
    ;; Laboratory for Type Theory Experiments
-   [latte "0.3.7-SNAPSHOT"]
+   [latte "0.6.1-SNAPSHOT"]
    ;; Formalization of (typed) Set theory in LaTTe.
    ;; [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
    ]
   :plugins
-  [[lein-cljsbuild "1.1.3"]
-   [lein-figwheel "0.5.8" :exclusions [org.clojure/clojure]]
+  [[lein-cljsbuild "1.1.5"]
+   [lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
-   #_[cider/cider-nrepl "0.11.0"]]
+   #_[cider/cider-nrepl "0.14.0"]]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
 
