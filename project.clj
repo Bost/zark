@@ -46,7 +46,11 @@
    [funcool/cuerdas "2.0.3"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed "0.3.32"]
+   [org.clojure/core.typed
+    "0.3.25"   ;; works
+    #_"0.3.26" ;; CIDER's version (0.14.0) does not match cider-nrepl's version (nil)
+    #_"0.3.32" ;; CIDER's version (0.14.0) does not match cider-nrepl's version (nil)
+    ]
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
