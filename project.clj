@@ -9,20 +9,20 @@
    [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.7.7"] ; hiccup style templating for om-next
+   [sablono "0.8.0"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [org.clojure/clojurescript "1.9.495" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.9.542" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.4.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]]
    ;; describe how a web server communicates with web apps
    ;; and how web apps can be chained together to process one request
-   [ring "1.5.1" ;; low-level interface and library for web apps
+   [ring "1.6.1" ;; low-level interface and library for web apps
     :exclusions [commons-codec]]
-   [compojure "1.5.2"
+   [compojure "1.6.0"
     :exclusions [commons-codec org.clojure/tools.macro]]
 
-   [com.andrewmcveigh/cljs-time "0.4.0"] ; (time/now)
+   [com.andrewmcveigh/cljs-time "0.5.0"] ; (time/now)
    ;; webapp - end
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
@@ -55,13 +55,13 @@
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
    ;; Laboratory for Type Theory Experiments
-   [latte "0.6.1-SNAPSHOT"]
+   [latte "0.7.0" #_"0.6.1-SNAPSHOT"]
    ;; Formalization of (typed) Set theory in LaTTe.
    ;; [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
    ]
   :plugins
-  [[lein-cljsbuild "1.1.5"]
-   [lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]
+  [[lein-cljsbuild "1.1.6"]
+   [lein-figwheel "0.5.10" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
    #_[cider/cider-nrepl "0.14.0"]]
   ;; TODO: uncomment for autorun :main zark.core
@@ -96,14 +96,14 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.9"
+   :dev {:dependencies [[figwheel-sidecar "0.5.10"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
                         [org.clojure/test.check "0.9.0"] ; for clojure.spec
                         [com.cemerick/piggieback "0.2.1"]
-                        [org.clojure/tools.nrepl "0.2.12"]]
+                        [org.clojure/tools.nrepl "0.2.13"]]
          ;; Leads to Error loading cemerick.piggieback ... /queue-eval is not public
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
          :source-paths ["src/cljs" "src/clj"]}})

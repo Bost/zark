@@ -7,7 +7,7 @@
              :refer [definition defthm defaxiom defnotation
                      forall lambda ==>
                      assume have proof try-proof
-                     term type-of type-check?]]
+                     term type-of type-check? qed]]
 
             ;; ... the "standard" library (propositions, quantifiers and equality)
             [latte.prop :as p :refer [<=> and or not]]
@@ -69,27 +69,27 @@
 (defthm and-elim-left- ""
   [[A :type] [B :type]] (==> (and- A B) A))
 
-(proof and-elim-left- :script
-  "Our hypothesis"
+#_(proof and-elim-left- :script
+  ;; "Our hypothesis"
   (assume [p (and- A B)]
-    "The starting point: use the definition of conjunction:
-             (∀ [C :type]
-                (==> (==> A B C)
-                     C))"
+    ;; "The starting point: use the definition of conjunction:
+    ;;          (∀ [C :type]
+    ;;             (==> (==> A B C)
+    ;;                  C))"
     (have <f> (==> (==> A B A) A) :by (p A))
-    "We need to prove that if A is true and B is true then A is true"
+    ;; "We need to prove that if A is true and B is true then A is true"
     (assume [x A
              y B]
       (have <a> A :by x)
       (have <c> (==> A B A) :discharge [x y <a>])) ;; (λ [x A] (λ [y B] x))
-    "Now we can use <f> as a function"
+    ;; "Now we can use <f> as a function"
     (have <d> A :by (<f> <c>))
     (qed <d>)))
 
 (defthm and-elim-right- ""
   [[A :type] [B :type]] (==> (and- A B) B))
 
-(proof and-elim-right- :script
+#_(proof and-elim-right- :script
   "Our hypothesis"
   ;; i.e assume A, B are true and p is the witness; i.e I suppose I have
   ;; a lambda term to prove
@@ -123,17 +123,60 @@
     (have concl A :by x) ;; internally (λ [x A] x) is created
     (qed concl)))
 
+
 (defthm impl-ignore "A variant of reflexivity."
   [[A :type] [B :type]] (==> A B A))
 
 (proof impl-ignore :term (λ [x A] (λ [y B] x)))
 
 (proof impl-ignore :script
+  (assume [
+           x A
+           y B
+           xx A
+           ]
+    (have <a> A :by (H1 x))
+    (qed <a>)))
+
+
+(defthm impl-a [[A :type] [B :type]] (==> A B A))
+(proof impl-a :term (λ [x A] (λ [y B] x)))
+(defthm impl-b [[A :type] [B :type]] (==> A B B))
+(proof impl-b :term (λ [x A] (λ [y B] y)))
+
+(defthm impl-i [[A :type] [B :type]] (==> A B))
+(proof impl-i
+    :script
   (assume [x A
-           y B]
-    (have <a> A :by x)
-    (have <c> (==> A B A) :discharge [x y <a>])
-    (qed <c>)))
+           B :type
+           z (==> A B)]
+    (have b B :by (z x))
+    (qed b)))
+
+
+(defthm and-intro
+  "Introduction rule for logical conjunction."
+  [[A :type] [B :type]]
+  (==> A B
+       (and B A)))
+
+(proof and-intro
+       :term
+       (λ [x A]
+          (λ [y B]
+             (λ [C :type]
+                (λ [z (==> B A C)]
+                   z y x)))))
+
+(proof and-intro
+    :script
+  (assume [x A
+           y B
+           C :type
+           z (==> B A C)]
+    (have a (==> A C) :by (z y))
+    (have b C :by ((a) x))
+    (qed b)))
 
 (defthm modus-ponens "Implication elimination"
   [[A :type] [B :type]] (==> (==> A B) A B))
