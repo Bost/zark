@@ -61,7 +61,7 @@
    ]
   :plugins
   [[lein-cljsbuild "1.1.7"]
-   [lein-figwheel "0.5.11" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.12" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
    #_[cider/cider-nrepl "0.14.0"]]
   ;; TODO: uncomment for autorun :main zark.core
@@ -96,7 +96,7 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.11"
+   :dev {:dependencies [[figwheel-sidecar "0.5.12"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
