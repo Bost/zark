@@ -3,13 +3,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
-  [[org.clojure/clojure "1.9.0-alpha19"]
-   [com.datomic/datomic-free "0.9.5561.56" :exclusions [joda-time]]
+  [[org.clojure/clojure "1.9.0-beta1"]
+   [com.datomic/datomic-free "0.9.5561.59" :exclusions [joda-time]]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.8.0"] ; hiccup style templating for om-next
+   [sablono "0.8.1"] ; hiccup style templating for om-next
 
    ;; webapp - begin
    [org.clojure/clojurescript "1.9.908" :exclusions [com.google.guava/guava]]
@@ -31,7 +31,7 @@
    [org.clojure/core.contracts "0.0.6"]
    [org.clojure/core.memoize "0.5.9"]
 
-   ;; [org.clojure/core.match "0.3.0-alpha4"] ; pattern matching library
+   [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
 
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
@@ -46,16 +46,12 @@
    [funcool/cuerdas "2.0.3"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed
-    "0.4.0"   ;; works
-    #_"0.3.26" ;; CIDER's version (0.14.0) does not match cider-nrepl's version (nil)
-    #_"0.3.32" ;; CIDER's version (0.14.0) does not match cider-nrepl's version (nil)
-    ]
+   [org.clojure/core.typed "0.4.1" :classifier "slim"] ;; slim vs. fat/ueberjar
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
    ;; Laboratory for Type Theory Experiments
-   [latte "0.7.0" #_"0.6.1-SNAPSHOT"]
+   [latte "0.6.1-SNAPSHOT" #_"0.7.0"]
    ;; Formalization of (typed) Set theory in LaTTe.
    ;; [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
    ]
@@ -63,7 +59,7 @@
   [[lein-cljsbuild "1.1.7"]
    [lein-figwheel "0.5.13" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
-   #_[cider/cider-nrepl "0.14.0"]]
+   [cider/cider-nrepl "0.15.1"]]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
 
