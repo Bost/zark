@@ -4,6 +4,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
   [[org.clojure/clojure "1.9.0-beta1"]
+   [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [com.datomic/datomic-free "0.9.5561.59" :exclusions [joda-time]]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
@@ -57,7 +58,7 @@
    ]
   :plugins
   [[lein-cljsbuild "1.1.7"]
-   [lein-figwheel "0.5.13" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.14" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
    [cider/cider-nrepl "0.15.1"]]
   ;; TODO: uncomment for autorun :main zark.core
@@ -93,7 +94,7 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.13"
+   :dev {:dependencies [[figwheel-sidecar "0.5.14"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer

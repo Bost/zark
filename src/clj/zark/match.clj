@@ -2,7 +2,8 @@
 https://youtu.be/OyfBQmvr2Hc"}
     zark.match
   (:require
-   [clojure.core.match :refer [match]]))
+   [clojure.core.match :refer [match]]
+   [defun.core :refer [defun]]))
 
 (defn eval-expr [expr env]
   #_(println "expr:" expr "type:" (type expr))
@@ -39,3 +40,20 @@ https://youtu.be/OyfBQmvr2Hc"}
 (eval-expr '(((fn [x] x) (fn [y] y)) 5) env)
 (eval-expr '(inc 1) env)
 (eval-expr '(+ 1 2 3) env)
+
+;; TODO recursion as a start-stop-work pattern: search for 'recur' in the code.
+
+(letfn [(twice [x]
+          (* x 2))
+        (six-times [y]
+          (* (twice y) 3))]
+  (println "Twice 15 =" (twice 15))
+  (println "Six times 15 =" (six-times 15)))
+
+;; A contrived example of mutual recursion
+(defn even2? [n]
+  (letfn [(neven? [n] (if (zero? n) true (nodd? (dec n))))
+          (nodd? [n] (if (zero? n) false (neven? (dec n))))]
+    (neven? n)))
+
+;; TODO does M(x) halt withing N steps: is it better to compute vals of have tables with precomputed vals.
