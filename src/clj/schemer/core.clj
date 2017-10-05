@@ -9,6 +9,7 @@ The Reasoned Schemer
 
 "}
     schemer.core
+  (:require [clojure.core.logic.fd :as fd])
   (:use clojure.core.logic)
   (:refer-clojure :exclude [== inc reify])
   (:gen-class))
@@ -209,3 +210,27 @@ The Reasoned Schemer
     ;; (== f# x)
     (== (cons z (cons y ())) r)
     ))
+
+(defn cinema-1 [n]
+  (+ 40 (* (- n 1) 4)))
+
+(defn cinema [n]
+  (for [i (range n)]
+    (->> i
+         clojure.core/inc
+         cinema-1)))
+
+(run* [n]
+  s#
+  (== 1224
+      n
+      #_(cinema n)))
+
+(run* [q]
+  (fd/in q (fd/interval 1 5)))
+
+(run* [q]
+  (fresh [x y]
+    (fd/in x y (fd/interval 1 10))
+    (fd/+ x y 10)
+    (== q [x y])))
