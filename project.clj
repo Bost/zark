@@ -3,9 +3,9 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
-  [[org.clojure/clojure "1.9.0-beta1"]
+  [[org.clojure/clojure "1.9.0-beta2"]
    [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
-   [com.datomic/datomic-free "0.9.5561.59" :exclusions [joda-time]]
+   [com.datomic/datomic-free "0.9.5561.62" :exclusions [joda-time]]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
@@ -13,7 +13,7 @@
    [sablono "0.8.1"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [org.clojure/clojurescript "1.9.908" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.9.946" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.4.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]]
    ;; describe how a web server communicates with web apps
@@ -44,7 +44,7 @@
    ;; [com.draines/postal "1.11.3"]            ; sending emails
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
-   [funcool/cuerdas "2.0.3"] ; string manipulation - (str/surround % "'")
+   [funcool/cuerdas "2.0.4"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
    [org.clojure/core.typed "0.4.1" :classifier "slim"] ;; slim vs. fat/ueberjar
