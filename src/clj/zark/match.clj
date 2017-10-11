@@ -42,6 +42,13 @@ https://youtu.be/OyfBQmvr2Hc"}
 (eval-expr '(+ 1 2 3) env)
 
 ;; TODO recursion as a start-stop-work pattern: search for 'recur' in the code.
+(defun zipmap
+  ([keys vals] (recur {} (seq keys) (seq vals))) ;; start
+  ([map ks :guard empty? vs              ] map)  ;; stop
+  ([map ks               vs :guard empty?] map)  ;; stop
+  ([map ks               vs              ]       ;; work
+   (recur (assoc map (first ks) (first vs))
+          (next ks) (next vs))))
 
 (letfn [(twice [x]
           (* x 2))
@@ -57,3 +64,4 @@ https://youtu.be/OyfBQmvr2Hc"}
     (neven? n)))
 
 ;; TODO does M(x) halt withing N steps: is it better to compute vals of have tables with precomputed vals.
+
