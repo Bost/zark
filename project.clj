@@ -37,7 +37,7 @@
 
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
-   [clojurewerkz/quartzite "2.0.0"] ; scheduling
+   [clojurewerkz/quartzite "2.1.0"] ; scheduling
    [clj-time "0.14.0"]
    ;; [korma "0.4.0"] ;; sql for clojure
    ;; [onelog "0.4.5"]  ;; used also by ring
@@ -48,7 +48,7 @@
    [funcool/cuerdas "2.0.4"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed "0.4.1" :classifier "slim"] ;; slim vs. fat/ueberjar
+   [org.clojure/core.typed "0.4.2" :classifier "slim"] ;; slim vs. fat/ueberjar
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
