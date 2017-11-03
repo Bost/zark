@@ -47,6 +47,34 @@
      (reduce + 0))
 ;; => 45
 
+(let [u 1
+      v 2]
+  (transduce
+   (comp
+    (map #(+ u %))
+    (map #(+ v %)))
+   + 0
+   (range 5)))
+;; => 25
+
+(defn x-fn1 [u v]
+  (comp
+   (map #(+ u %))
+   (map #(+ v %))))
+
+(defn x-fn2 [u v]
+  (map (comp
+        #(+ u %)
+        #(+ v %))))
+
+(let [u 1
+      v 2
+      vals (range 5)]
+  (=
+   (transduce (x-fn1 u v) + 0 vals)
+   (transduce (x-fn2 u v) + 0 vals)))
+;; => true
+
 (def xform (comp (filter odd?) (map inc)))
 
 (defn process [items]
