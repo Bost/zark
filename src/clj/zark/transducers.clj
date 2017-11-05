@@ -106,7 +106,7 @@
       ([] (rf))
       ([result] (rf result))
       ([result el]
-       (let [n-step (if idx (str "Step: " idx ". ") "")]
+       (let [n-step (if idx (str "idx: Step: " idx ". ") "")]
          (println (format "%sResult: %s, Item: %s" n-step result el)))
        (rf result el)))))
 
