@@ -6,49 +6,49 @@
   [[org.clojure/clojure "1.9.0"]
    [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
-   [com.datomic/datomic-free "0.9.5561.62" :exclusions [joda-time]]
+   [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.8.1"] ; hiccup style templating for om-next
+   [sablono "0.8.4"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [org.clojure/clojurescript "1.9.946" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.10.339" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.4.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]]
    ;; describe how a web server communicates with web apps
    ;; and how web apps can be chained together to process one request
-   [ring "1.6.2" ;; low-level interface and library for web apps
+   [ring "1.6.3" ;; low-level interface and library for web apps
     :exclusions [commons-codec]]
-   [compojure "1.6.0"
+   [compojure "1.6.1"
     :exclusions [commons-codec org.clojure/tools.macro]]
 
-   [com.andrewmcveigh/cljs-time "0.5.1"] ; (time/now)
+   [com.andrewmcveigh/cljs-time "0.5.2"] ; (time/now)
    ;; webapp - end
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
    [org.clojure/core.contracts "0.0.6"]
-   [org.clojure/core.memoize "0.5.9"]
+   [org.clojure/core.memoize "0.7.1"]
 
    [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
 
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
    [clojurewerkz/quartzite "2.1.0"] ; scheduling
-   [clj-time "0.14.0"]
+   [clj-time "0.14.4"]
    ;; [korma "0.4.0"] ;; sql for clojure
    ;; [onelog "0.4.5"]  ;; used also by ring
 
    ;; [com.draines/postal "1.11.3"]            ; sending emails
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
-   [funcool/cuerdas "2.0.4"] ; string manipulation - (str/surround % "'")
+   [funcool/cuerdas "2.0.5"] ; string manipulation - (str/surround % "'")
 
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed "0.4.2" :classifier "slim"] ;; slim vs. fat/ueberjar
+   [org.clojure/core.typed "0.5.3" :classifier "slim"] ;; slim vs. fat/ueberjar
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
@@ -59,9 +59,9 @@
    ]
   :plugins
   [[lein-cljsbuild "1.1.7"]
-   [lein-figwheel "0.5.14" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.16" :exclusions [org.clojure/clojure]]
    #_[refactor-nrepl "2.2.0"]
-   [cider/cider-nrepl "0.15.1"]]
+   [cider/cider-nrepl "0.17.0"]]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
 
@@ -95,7 +95,7 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.14"
+   :dev {:dependencies [[figwheel-sidecar "0.5.16"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
