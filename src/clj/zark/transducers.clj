@@ -112,3 +112,31 @@
 
 ;; sequence coerces (donutit) coll to a (possibly empty) sequence
 (sequence (log) [:a :b :c])
+
+(def ^:dynamic *dbg?* false)
+
+(defn comp* [& xforms]
+  (apply comp
+         (if *dbg?*
+           (->>
+            (range)
+            (map log)
+            ;; lazy seq of the fst item in each coll, then the snd etc.
+            (interleave xforms))
+           xforms)))
+
+(transduce
+ (comp*
+  (filter odd?)
+  (map inc))
+ +
+ (range 5))
+;; 6
+
+(binding [*dbg?* true]
+  (transduce
+   (comp*
+    (filter odd?)
+    (map inc))
+   +
+   (range 5))) ;; (range 5) => (0 1 2 3 4)

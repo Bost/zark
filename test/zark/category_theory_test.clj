@@ -3,6 +3,10 @@
             [zark.ct4js :refer :all])
   (:import [zark.ct4js None Some]))
 
+
+(cond
+  (zero? (mod n 15) "uff"))
+
 (deftest test-contract-basic
   (testing "Contract for Strings, Numbers, Booleans"
     (is (= true (c-bool true)))

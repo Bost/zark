@@ -1,5 +1,7 @@
 (ns zark.transducerfun)
 
+(map inc [1])
+
 (require '[clojure.core.async :as a])
 
 (def xform (comp (map inc)
