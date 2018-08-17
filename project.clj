@@ -13,10 +13,10 @@
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
    [sablono "0.8.4"] ; hiccup style templating for om-next
+
    ;; webapp - begin
    [re-frame "0.10.5"]
    [secretary "1.2.3"]
-   #_[org.clojure/clojurescript "1.9.946"]
    [org.clojure/clojurescript "1.10.339" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.5.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]] ;; is this needed?
@@ -25,17 +25,15 @@
    ;; describe how a web server communicates with web apps
    ;; and how web apps can be chained together to process one request
    [ring "1.6.3"]
-   ;; [ring "1.6.3" :exclusions [commons-codec]]
    [compojure "1.6.1"]
    ;; [compojure "1.6.1" :exclusions [commons-codec org.clojure/tools.macro]]
    [garden "1.3.5"] ; render CSS
    [com.andrewmcveigh/cljs-time "0.5.2"] ;; (time/now) in cljs
-
    ;; webapp - end
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
-   [org.clojure/java.jdbc "0.7.7"]
+   [org.clojure/java.jdbc "0.7.8"]
    [com.mchange/c3p0 "0.9.5.2"] ; db connection pooling
    [mysql/mysql-connector-java "6.0.6"]
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
@@ -56,7 +54,6 @@
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
    [funcool/cuerdas "2.0.6"] ; string manipulation - (str/surround % "'")
-
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
    [org.clojure/core.typed "0.5.3" :classifier "slim"] ;; slim vs. fat/ueberjar
 
@@ -72,6 +69,7 @@
    [lein-figwheel "0.5.16" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    [lein-garden "0.3.0"]
+   [cider/cider-nrepl "0.18.0"]
    ]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
