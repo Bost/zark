@@ -57,6 +57,26 @@
    (range 5)))
 ;; => 25
 
+(transduce
+ identity
+ conj []
+ (range 5))
+;; => [0 1 2 3 4]
+
+(transduce
+ identity
+ (fn [& args] (vec (flatten (vector args)))) []
+ (range 5))
+;; => [0 1 2 3 4]
+
+(transduce
+ (comp
+  (map inc)
+  identity)
+ (fn [& args] (vec (flatten (vector args)))) []
+ (range 5))
+;; => [1 2 3 4 5]
+
 (defn x-fn1 [u v]
   (comp
    (map #(+ u %))
