@@ -43,7 +43,7 @@
    [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
 
    [clj-time-ext "0.13.0"] ;; (time/now) in clj
-   [clj-time "0.14.4"]
+   [clj-time "0.15.1"]
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
    [clojurewerkz/quartzite "2.1.0"] ; scheduling
@@ -66,7 +66,7 @@
    ]
   :plugins
   [
-   [lein-figwheel "0.5.16" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.17" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    [lein-garden "0.3.0"]
    [cider/cider-nrepl "0.18.0"]
@@ -104,14 +104,14 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.16"
+   :dev {:dependencies [[figwheel-sidecar "0.5.17"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
                         [org.clojure/test.check "0.9.0"] ; for clojure.spec
                         [com.cemerick/piggieback "0.2.2"]
-                        [figwheel-sidecar "0.5.16"]
+                        [figwheel-sidecar "0.5.17"]
                         [ns-tracker "0.3.1"]
                         [binaryage/devtools "0.9.10"]
                         [org.clojure/tools.nrepl "0.2.13"]]
