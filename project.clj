@@ -15,19 +15,19 @@
    [sablono "0.8.4"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [re-frame "0.10.5"]
+   [re-frame "0.10.6"]
    [secretary "1.2.3"]
-   [org.clojure/clojurescript "1.10.339" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.10.439" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.5.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]] ;; is this needed?
 
    ;; Ring routing lib; dispatching of GET, PUT, etc.
    ;; describe how a web server communicates with web apps
    ;; and how web apps can be chained together to process one request
-   [ring "1.6.3"]
+   [ring "1.7.1"]
    [compojure "1.6.1"]
    ;; [compojure "1.6.1" :exclusions [commons-codec org.clojure/tools.macro]]
-   [garden "1.3.5"] ; render CSS
+   [garden "1.3.6"] ; render CSS
    [com.andrewmcveigh/cljs-time "0.5.2"] ;; (time/now) in cljs
    ;; webapp - end
 
@@ -55,7 +55,7 @@
    [clj-ssh "0.5.14"]
    [funcool/cuerdas "2.0.6"] ; string manipulation - (str/surround % "'")
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed "0.5.3" :classifier "slim"] ;; slim vs. fat/ueberjar
+   [org.clojure/core.typed "0.5.5" :classifier "slim"] ;; slim vs. fat/ueberjar
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
