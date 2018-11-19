@@ -35,7 +35,7 @@
 
    [org.clojure/java.jdbc "0.7.8"]
    [com.mchange/c3p0 "0.9.5.2"] ; db connection pooling
-   [mysql/mysql-connector-java "6.0.6"]
+   [mysql/mysql-connector-java "8.0.13"]
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
    [org.clojure/core.contracts "0.0.6"]
    [org.clojure/core.memoize "0.7.1"]
