@@ -69,7 +69,6 @@
    [lein-figwheel "0.5.17" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    [lein-garden "0.3.0"]
-   [cider/cider-nrepl "0.18.0"]
    ]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
@@ -86,10 +85,6 @@
    ;; :server-ip "10.90.20.167" ; see :websocket-host
    :http-server-root "public" ; css-dirs requires http-server-root specification
    :css-dirs ["resources/public/css"]
-   ;; Load CIDER, refactor-nrepl and piggieback middleware
-   ;; :nrepl-middleware ["cider.nrepl/cider-middleware"V
-   ;;                    ;; "refactor-nrepl.middleware/wrap-refactor"
-   ;;                    "cemerick.piggieback/wrap-cljs-repl"]
    }
 
   :cljsbuild
