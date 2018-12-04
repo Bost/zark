@@ -62,9 +62,13 @@
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
    ;; Laboratory for Type Theory Experiments
-   [latte "0.6.1-SNAPSHOT" #_"0.7.0"]
+   [latte "1.0b1-SNAPSHOT"]
+   ;; The core "standard" library for the LaTTe proof assistant.
+   [latte-prelude "0.2.0-SNAPSHOT"]
    ;; Formalization of (typed) Set theory in LaTTe.
-   ;; [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
+   [latte-sets "0.7.0-SNAPSHOT"]
+   ;;Formalization of integers in LaTTe.
+   [latte-integers "0.9.0-SNAPSHOT"]
 
    [funcool/cats "2.3.2"]
    ]
