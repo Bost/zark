@@ -63,6 +63,8 @@
    [latte "0.6.1-SNAPSHOT" #_"0.7.0"]
    ;; Formalization of (typed) Set theory in LaTTe.
    ;; [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
+
+   [funcool/cats "2.3.1"]
    ]
   :plugins
   [
