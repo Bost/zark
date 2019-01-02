@@ -4,10 +4,12 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
   [
-   [org.clojure/clojure "1.9.0"]
+   [org.clojure/clojure "1.10.0"]
    [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
    [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
+   ;; see https://dev.clojure.org/jira/browse/CRRBV-18
+   [org.clojure/core.rrb-vector "0.0.13"]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
@@ -55,7 +57,7 @@
    [clj-ssh "0.5.14"]
    [funcool/cuerdas "2.0.6"] ; string manipulation - (str/surround % "'")
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed "0.5.5" :classifier "slim"] ;; slim vs. fat/ueberjar
+   [org.clojure/core.typed "0.6.0" :classifier "slim"] ;; slim vs. fat/ueberjar
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
@@ -64,11 +66,11 @@
    ;; Formalization of (typed) Set theory in LaTTe.
    ;; [latte-sets "0.0.7-SNAPSHOT"] ; local installation: lein install
 
-   [funcool/cats "2.3.1"]
+   [funcool/cats "2.3.2"]
    ]
   :plugins
   [
-   [lein-figwheel "0.5.17" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.18" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    [lein-garden "0.3.0"]
    ]
@@ -101,14 +103,14 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.17"
+   :dev {:dependencies [[figwheel-sidecar "0.5.18"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
                         [org.clojure/test.check "0.9.0"] ; for clojure.spec
                         [com.cemerick/piggieback "0.2.2"]
-                        [figwheel-sidecar "0.5.17"]
+                        [figwheel-sidecar "0.5.18"]
                         [ns-tracker "0.3.1"]
                         [binaryage/devtools "0.9.10"]
                         [org.clojure/tools.nrepl "0.2.13"]]
