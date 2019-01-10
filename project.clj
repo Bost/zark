@@ -44,7 +44,7 @@
 
    [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
 
-   [clj-time-ext "0.13.0"] ;; (time/now) in clj
+   [clj-time-ext "0.0.0-31-0x6e56"] ;; (time/now) in clj
    [clj-time "0.15.1"]
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
