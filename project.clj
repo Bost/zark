@@ -1,4 +1,4 @@
-(defproject zark "1.0.0-SNAPSHOT"
+(defproject zark :lein-v
   :description "Mighty ZarkOne!"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -14,7 +14,7 @@
    [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.8.4"] ; hiccup style templating for om-next
+   [sablono "0.8.5"] ; hiccup style templating for om-next
 
    ;; webapp - begin
    [re-frame "0.10.6"]
@@ -55,7 +55,7 @@
    ;; [com.draines/postal "1.11.3"]            ; sending emails
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
-   [funcool/cuerdas "2.0.6"] ; string manipulation - (str/surround % "'")
+   [funcool/cuerdas "2.1.0"] ; string manipulation - (str/surround % "'")
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
    [org.clojure/core.typed "0.6.0" :classifier "slim"] ;; slim vs. fat/ueberjar
 
@@ -74,6 +74,8 @@
    ]
   :plugins
   [
+   ;; Drive leiningen project version from git instead of the other way around
+   [com.roomkey/lein-v "7.0.0"]
    [lein-figwheel "0.5.18" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    [lein-garden "0.3.0"]
