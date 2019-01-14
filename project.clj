@@ -82,7 +82,10 @@
    [lein-cljsbuild "1.1.7"]
    ;; autocompile theGarden stylesheets - see the [garden "..."] dependency
    [lein-garden "0.3.0"]
+   ;; autorecompile changed java files
+   [lein-virgil "0.1.9"]
    ]
+  :java-source-paths ["javasrc"]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
 
