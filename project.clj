@@ -74,10 +74,13 @@
    ]
   :plugins
   [
+   ;; a plugin to tell you your code is bad, and that you should feel bad
+   [lein-bikeshed "0.5.1"]
    ;; Drive leiningen project version from git instead of the other way around
    [com.roomkey/lein-v "7.0.0"]
    [lein-figwheel "0.5.18" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
+   ;; autocompile theGarden stylesheets - see the [garden "..."] dependency
    [lein-garden "0.3.0"]
    ]
   ;; TODO: uncomment for autorun :main zark.core
