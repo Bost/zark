@@ -3,8 +3,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
-  [
-   [org.clojure/clojure "1.10.0"]
+  [[org.clojure/clojure "1.10.0"]
    [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
    [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
@@ -70,11 +69,9 @@
    ;;Formalization of integers in LaTTe.
    [latte-integers "0.9.0-SNAPSHOT"]
 
-   [funcool/cats "2.3.2"]
-   ]
+   [funcool/cats "2.3.2"]]
   :plugins
-  [
-   ;; a plugin to tell you your code is bad, and that you should feel bad
+  [;; a plugin to tell you your code is bad, and that you should feel bad
    [lein-bikeshed "0.5.1"]
    ;; Drive leiningen project version from git instead of the other way around
    [com.roomkey/lein-v "7.0.0"]
@@ -83,8 +80,7 @@
    ;; autocompile theGarden stylesheets - see the [garden "..."] dependency
    [lein-garden "0.3.0"]
    ;; autorecompile changed java files
-   [lein-virgil "0.1.9"]
-   ]
+   [lein-virgil "0.1.9"]]
   :java-source-paths ["javasrc"]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
@@ -100,8 +96,7 @@
    ;; the 'Figwheel: Starting server at http://localhost:3449' is misleading
    ;; :server-ip "10.90.20.167" ; see :websocket-host
    :http-server-root "public" ; css-dirs requires http-server-root specification
-   :css-dirs ["resources/public/css"]
-   }
+   :css-dirs ["resources/public/css"]}
 
   :cljsbuild
   {:builds [{:id "dev"
@@ -115,27 +110,22 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.18"
+   :dev {:dependencies [[figwheel-sidecar "0.5.4-6"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
                         [org.clojure/test.check "0.9.0"] ; for clojure.spec
-                        [com.cemerick/piggieback "0.2.2"]
-                        [figwheel-sidecar "0.5.18"]
+                        [cider/piggieback "0.3.10"]
                         [ns-tracker "0.3.1"]
                         [binaryage/devtools "0.9.10"]
-                        [org.clojure/tools.nrepl "0.2.13"]]
-         ;; Leads to Error loading cemerick.piggieback ... /queue-eval is not public
+                        [nrepl "0.5.3"]]
+         ;; Leads to Error loading cemerick.piggieback ...
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
          :source-paths ["src/cljs" "src/clj"]}}
-
   :garden
   {:builds [{:id "screen"
              :source-paths ["src/clj"]
              :stylesheet ufo.css/screen
              :compiler {:output-to "resources/public/css/style.css"
-                        :pretty-print? true}}]
-   ;; [org.clojure/tools.nrepl "0.2.13"]
-   }
-  )
+                        :pretty-print? true}}]})
