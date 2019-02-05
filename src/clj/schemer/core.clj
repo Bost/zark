@@ -64,7 +64,7 @@ The Reasoned Schemer
     (fresh [x]
       (== t# x))))
 
-(cons 1 ()) ;; create a list containg 1: (1)
+(cons 1 ()) ;; create a list containing 1: (1)
 
 ;; (cdr '(1 2))
 
