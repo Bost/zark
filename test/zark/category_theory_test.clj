@@ -1,7 +1,7 @@
 (ns zark.category-theory-test
   (:require [clojure.test :refer :all]
-            [zark.ct4js :refer :all])
-  (:import [zark.ct4js None Some]))
+            [zark.category-theory-for-javascript :refer :all])
+  (:import [zark.category-theory-for-javascript None Some]))
 
 
 (cond

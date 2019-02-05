@@ -1,6 +1,6 @@
 (ns ^{:doc "According to Category theory for JavaScript programmers by Mike
       Stay: https://youtu.be/-FkgOHvNAU8"}
-    zark.ct4js)
+    zark.category-theory-for-javascript)
 
 
 (defn c-str
