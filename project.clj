@@ -110,7 +110,7 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.4-6"
+   :dev {:dependencies [[figwheel-sidecar "0.5.18"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
