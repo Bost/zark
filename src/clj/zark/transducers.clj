@@ -1,12 +1,16 @@
 (ns zark.transducers
   ;; transform (multiple times) and then reduce
-  (:require [clojure.core.async :refer [>! <! <!!] :as a]))
+  (:require
+   [clojure.core.async :refer [>! <! <!!] :as a]
+   [clj-time-ext.core :as t]
+   [utils.core :refer [sjoin]]))
 
-;; (map inc) returns a transducer, i.e. a fn expecting one param - an reducing fn
+;; (map inc) returns a transducer, i.e. fn expecting one param - an reducing fn
 (def inc-and-filter
+  "At first (filter odd?) then (map inc) then indentity"
   (comp
-   (map inc)     ;; 1st
-   (filter odd?) ;; 2nds
+   (map inc)
+   (filter odd?)
    identity))
 
 (def special+ (inc-and-filter +))
@@ -98,8 +102,7 @@
 (def xform (comp (filter odd?) (map inc)))
 
 (defn process [items]
-  (let [
-        ;; create out-channel with buffer size of 1 and a transducer
+  (let [;; create out-channel with buffer size of 1 and a transducer
         out (a/chan 1 xform)
         ;; create in-channel containing items
         in (a/to-chan items)]
@@ -120,18 +123,30 @@
 
 (process (range 10))
 
-(defn log [& [idx]]
-  (fn [rf]
+(defn reducer-log [& [comp-step]]
+  (fn [reducer]
     (fn
-      ([] (rf))
-      ([result] (rf result))
-      ([result el]
-       (let [n-step (if idx (str "idx: Step: " idx ". ") "")]
-         (println (format "%sResult: %s, Item: %s" n-step result el)))
-       (rf result el)))))
+      ([] (reducer))          ;; e.g. (+)       => 0
+      ([init] (reducer init)) ;; e.g. (+ 100)   => 100
+      ([init coll-elem]       ;; e.g. (+ 100 1) => 101
+       (let [msg (-> [(format "[%s]" (t/tstp5))
+                      "reducer-init-val" init
+                      "composition-step" comp-step
+                      "coll-elem-val" coll-elem]
+                     sjoin)]
+         ;; reversed print order of composition-steps (1 0) and timestamps
+         #_(let [result (reducer init coll-elem)]
+           (if comp-step
+             (println msg "result" result))
+           result)
+         ;; ascending print order of composition-steps (0 1) and timestamps
+         (let []
+           (if comp-step
+             (println msg))
+           (reducer init coll-elem)))))))
 
-;; sequence coerces (donutit) coll to a (possibly empty) sequence
-(sequence (log) [:a :b :c])
+;; sequence coerces (= press, force) coll to a (possibly empty) sequence
+(sequence (reducer-log) [:a :b :c]) ;; => (:a :b :c)
 
 (def ^:dynamic *dbg?* false)
 
@@ -140,7 +155,7 @@
          (if *dbg?*
            (->>
             (range)
-            (map log)
+            (map reducer-log)
             ;; lazy seq of the fst item in each coll, then the snd etc.
             (interleave xforms))
            xforms)))
@@ -149,14 +164,17 @@
  (comp*
   (filter odd?)
   (map inc))
- +
- (range 5))
-;; 6
+ + 0
+ (range 5)) ;; => 6
 
 (binding [*dbg?* true]
   (transduce
    (comp*
-    (filter odd?)
-    (map inc))
-   +
+    ;; Composition of the transformer runs right-to-left but builds a
+    ;; transformation stack that runs left-to-right
+    ;; comp-step 1.
+    (map #(+ % 10))
+    ;; comp-step 0.
+    (map #(* % -1)))
+   + 100
    (range 5))) ;; (range 5) => (0 1 2 3 4)

@@ -43,8 +43,8 @@
 
    [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
 
-   [clj-time-ext "0.0.0-31-0x6e56"] ;; (time/now) in clj
-   [clj-time "0.15.1"]
+   [utils "0.0.0-18-0x2be8"] ;; pulls in also clj-time-ext
+
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
    [clojurewerkz/quartzite "2.1.0"] ; scheduling
@@ -69,7 +69,13 @@
    ;;Formalization of integers in LaTTe.
    [latte-integers "0.9.0-SNAPSHOT"]
 
-   [funcool/cats "2.3.2"]]
+   [funcool/cats "2.3.2"]
+
+   ;; logging doesn't work out-of-the-box
+   ;; [org.clojure/tools.logging "0.4.1"]
+   ;; debug single- and multi-threaded apps
+   ;; [spyscope "0.1.6"]
+   ]
   :plugins
   [;; a plugin to tell you your code is bad, and that you should feel bad
    [lein-bikeshed "0.5.1"]
