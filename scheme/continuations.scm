@@ -1,5 +1,5 @@
 ;; -*- origami-fold-style: triple-braces -*-
-;; start scheme repl: M-x run-geiser
+;; start & set scheme repl: `M-x run-geiser' `M-x geiser-set-scheme'
 ;; folding: M-x origami-forward-toggle-node / z a
 
 ;; constant function fc: AnyType (ignored & ignored) -> Number
