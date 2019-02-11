@@ -7,9 +7,13 @@
   ;; (display (bar)) (newline)
   (exit))
 
-(call-with-current-continuation (lambda (k) 1))
+;; https://www.gnu.org/software/guile/manual/html_node/Continuations.html
 
-(((call-with-current-continuation
+;; `call/cc' alias for `call-with-current-continuation'
+(call-with-current-continuation (lambda (k) 1))
+(call/cc (lambda (k) 1))
+
+(((call/cc
    (lambda (k)
      k))
   (lambda (x) x))
@@ -31,7 +35,7 @@
     (string-append
      "The result is: "
      (number->string
-      (call-with-current-continuation
+      (call/cc
        (lambda (break)                                          ;; [1]
          (let loop-fn ((ls initial-ls))                    ;; [2]
            (cond
@@ -43,7 +47,7 @@
 (product '(7 3 8 0 1 9 5)) ;; => "The result is: 0"
 (product '())              ;; => "The result is: 1"
 
-(call-with-current-continuation
+(call/cc
  (lambda (k)
    ;; (error (k "foo"))
    ;; the current computation `(/ 30 5 3)' is effectivelly ignored
@@ -65,8 +69,8 @@
 ;; => 3
 
 
-(call-with-current-continuation foo)   ;; => 2
-(call-with-current-continuation (foo)) ;; => error
+(call/cc foo)   ;; => 2
+(call/cc (foo)) ;; => error
 
 (define *x* '())
 (lambda (x)
@@ -83,7 +87,7 @@
 ;; == 3
 (define *k* '())
 
-(call-with-current-continuation
+(call/cc
  ;; k itself is the continuation
  ;; it represents (lambda (v) v)
  ;; and this time it's executed as: (+ 1 3)
@@ -95,7 +99,7 @@
 (*k* (* 2 3)) ;; executed as ((lambda (v) v) (* 2 3))
 ;; => 6
 
-(call-with-current-continuation
+(call/cc
  ;; k itself is the continuation
  ;; it represents (lambda (v) v)
  ;; and this time it's executed as: 2
@@ -114,7 +118,7 @@
 
 
 (+
- (call-with-current-continuation
+ (call/cc
   ;; k itself is the continuation
   ;; it represents (lambda (v) (+ v 5))
   ;; and this time it's executed as: (+ (* 3 4) 5)
@@ -129,7 +133,7 @@
 ;; => 11
 
 (+
- (call-with-current-continuation
+ (call/cc
   ;; k itself is the continuation
   ;; it represents (lambda (v) (+ v 5))
   ;; and this time it's executed as: (+ (* 3 4) 5)
@@ -146,7 +150,7 @@
 
 (define (foo n)
   (* 2
-     (call-with-current-continuation
+     (call/cc
       ;; k itself is the continuation
       ;; it represents (lambda (v) (define (foo n) (* 2 v)))
       ;; this time it's executed as: (define (foo n) (* 2 (+ n 1)))
@@ -172,7 +176,7 @@ continuation
   200)
 
 (define cont '())
-(+ (call-with-current-continuation
+(+ (call/cc
     (lambda (c)
       (begin
         (set! cont c)
@@ -188,7 +192,7 @@ continuation
 (define factorial
   (lambda (x)
     (if (= x 0)
-        (call-with-current-continuation
+        (call/cc
          (lambda (k) (set! retry k) 1))
         (* x (factorial (- x 1))))))
 
