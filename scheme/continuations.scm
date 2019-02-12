@@ -1,12 +1,15 @@
 ;; -*- origami-fold-style: triple-braces -*-
-;; start & set scheme repl: `M-x run-geiser' `M-x geiser-set-scheme'
+;; start & set scheme REPL: `M-x run-geiser' `M-x geiser-set-scheme'
 ;; folding: M-x origami-forward-toggle-node / z a
 
+;; Quick recap on LISP {{{
+;; L-I-S t   P-rocessing
 ;; constant function fc: AnyType (ignored & ignored) -> Number
 (define (fc) 1)
 
 ;; function of one argument fhw: String (infered) -> String
 (define (fhw arg) (string-append "Hello World, " arg))
+;; }}}
 
 ;; Motivational example {{{
 ;; [1] loop-fn is a compound-procedure of one argument `ls'
@@ -105,6 +108,9 @@
 ;; }}}
 
 ;; {{{
+;; call/cc creates "aborting" continuations that ignore the rest of the
+;; computation inside the body of the (lambda (k) ...) when k is invoked. See
+;; delimited continuations
 (define (foo return) (return 2) 3)
 (define (baz arg)    (arg 5) 7)
 (call/cc foo)   ;; => 2
