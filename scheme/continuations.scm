@@ -20,7 +20,7 @@
 ;;     Inefficient :-(
 ;; [4] Multiply & loop around
 ;; See also http://www.cs.sfu.ca/CourseCentral/383/havens/notes/Lecture06.pdf"
-(define (product init-ls)
+(define (multiply init-ls)
   "Multiply the elements of a list. Inefficient"
   (let loop-fn ((ls init-ls))                       ;; [1]
     (cond
@@ -28,9 +28,9 @@
      ((= (car ls) 0) 0)                             ;; [3]
      (else (* (car ls) (loop-fn (cdr ls)))))))      ;; [4]
 
-(product '(1 2 3 4 5))     ;; => 120
-(product '(7 3 8 0 1 9 5)) ;; => 0
-(product '())              ;; => 1
+(multiply '(1 2 3 4 5))     ;; => 120
+(multiply '(7 3 8 0 1 9 5)) ;; => 0
+(multiply '())              ;; => 1
 ;; }}}
 
 ;; Show inefficiency {{{
@@ -41,7 +41,7 @@
    ((number? arg) (number->string arg))
    (else "to-str not implemented for this type")))
 
-(define (product init-ls)
+(define (multiply init-ls)
   "Inefficient & buggy"
   (string-append
    "The result is: "
@@ -51,9 +51,9 @@
        ((null? ls) 1)
        ((= (car ls) 0) " a bloody 0. Haha!")
        (else (* (car ls) (loop-fn (cdr ls)))))))))
-(product '(1 2 3 4 5))     ;; => "The result is: 120"
-(product '())              ;; => "The result is: 1"
-(product '(7 3 8 0 1 9 5)) ;; => Wrong type
+(multiply '(1 2 3 4 5))     ;; => "The result is: 120"
+(multiply '())              ;; => "The result is: 1"
+(multiply '(7 3 8 0 1 9 5)) ;; => Wrong type
 ;; }}}
 
 ;; A better way {{{
@@ -68,7 +68,7 @@
 ;;     out of the loop.
 ;; [5] Multiply & loop around
 ;; See also http://www.cs.sfu.ca/CourseCentral/383/havens/notes/Lecture06.pdf"
-(define (product init-ls)
+(define (multiply init-ls)
   "Multiply the elements of a list. Efficient but malevolent."
   (string-append
    "The result is: "
@@ -81,9 +81,9 @@
           ((= (car ls) 0) (break " a bloody 0. Haha!")) ;; [4]
           (else (* (car ls) (loop-fn (cdr ls))))))))))) ;; [5]
 
-(product '(1 2 3 4 5))     ;; => "The result is: 120"
-(product '())              ;; => "The result is: 1"
-(product '(7 3 8 0 1 9 5)) ;; => "The result is: 0"
+(multiply '(1 2 3 4 5))     ;; => "The result is: 120"
+(multiply '())              ;; => "The result is: 1"
+(multiply '(7 3 8 0 1 9 5)) ;; => "The result is: 0"
 ;; }}}
 
 ;; {{{
@@ -93,18 +93,26 @@
 (call/cc (lambda (k) 1))
 ;; }}}
 
-(((call/cc
-   (lambda (k) k))
-  (lambda (x) x))
- "HEY!")
 
 ;; {{{
+;; `call/cc' alias for `call-with-current-continuation'
+;; https://www.gnu.org/software/guile/manual/html_node/Continuations.html
+(call-with-current-continuation (lambda (k) 1))
+(call/cc (lambda (k) 1))
+;; }}}
+
+;; Examples {{{
 (call/cc
  (lambda (k)
    ;; (error (k "foo"))
    ;; the current computation `(/ 30 5 3)' is effectivelly ignored
    (/ 30 5 (k 1) 3)))
 ;; => 1
+
+(((call/cc
+   (lambda (k) k))
+  (lambda (x) x))
+ "HEY!")
 ;; }}}
 
 ;; {{{
