@@ -3,12 +3,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
-  [[org.clojure/clojure "1.10.0"]
+  [
+   [org.clojure/clojure "1.10.0"]
    [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
    [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
    ;; see https://dev.clojure.org/jira/browse/CRRBV-18
-   [org.clojure/core.rrb-vector "0.0.13"]
+   [org.clojure/core.rrb-vector "0.0.14"]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
@@ -18,7 +19,7 @@
    ;; webapp - begin
    [re-frame "0.10.6"]
    [secretary "1.2.3"]
-   [org.clojure/clojurescript "1.10.439" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.10.520" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.5.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]] ;; is this needed?
 
@@ -34,16 +35,16 @@
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
-   [org.clojure/java.jdbc "0.7.8"]
-   [com.mchange/c3p0 "0.9.5.2"] ; db connection pooling
-   [mysql/mysql-connector-java "8.0.13"]
+   [org.clojure/java.jdbc "0.7.9"]
+   [com.mchange/c3p0 "0.9.5.3"] ; db connection pooling
+   [mysql/mysql-connector-java "8.0.15"]
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
    [org.clojure/core.contracts "0.0.6"]
    [org.clojure/core.memoize "0.7.1"]
 
    [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
 
-   [utils "0.0.0-18-0x2be8"] ;; pulls in also clj-time-ext
+   [utils "0.0.0-21-0xd148"] ;; pulls in also clj-time-ext
 
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
@@ -122,10 +123,10 @@
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
                         [org.clojure/test.check "0.9.0"] ; for clojure.spec
-                        [cider/piggieback "0.3.10"]
+                        [cider/piggieback "0.4.0"]
                         [ns-tracker "0.3.1"]
                         [binaryage/devtools "0.9.10"]
-                        [nrepl "0.5.3"]]
+                        [nrepl "0.6.0"]]
          ;; Leads to Error loading cemerick.piggieback ...
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
          :source-paths ["src/cljs" "src/clj"]}}
