@@ -1,5 +1,14 @@
 (ns zark.interop
+  (:require
+   [midje.sweet :refer :all]
+   [clojure-python.core :as base])
   (:import [org.domain Main]))
+
+;; doesn't work
+#_(with-test-interp
+  (base/py-import-lib example)
+  (base/import-fn example hello)
+  (hello "world"))
 
 (def class-name "org.domain.Main")
 (clojure.lang.Reflector/getStaticField class-name "FIELD")

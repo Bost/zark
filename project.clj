@@ -76,6 +76,14 @@
    ;; [org.clojure/tools.logging "0.4.1"]
    ;; debug single- and multi-threaded apps
    ;; [spyscope "0.1.6"]
+
+   [org.python/jython-standalone "2.5.3"]
+   ;; Clojure Jython interop
+   [clojure-python "0.4.1"]
+   [midje "1.9.6"]
+
+
+   [halfling "1.2.1"]
    ]
   :plugins
   [;; a plugin to tell you your code is bad, and that you should feel bad
@@ -126,7 +134,7 @@
                         [cider/piggieback "0.4.0"]
                         [ns-tracker "0.3.1"]
                         [binaryage/devtools "0.9.10"]
-                        [nrepl "0.6.0"]]
+                        ]
          ;; Leads to Error loading cemerick.piggieback ...
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
          :source-paths ["src/cljs" "src/clj"]}}
