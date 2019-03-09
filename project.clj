@@ -77,9 +77,9 @@
    ;; debug single- and multi-threaded apps
    ;; [spyscope "0.1.6"]
 
-   [org.python/jython-standalone "2.5.3"]
+   [org.python/jython-standalone "2.7.1"]
    ;; Clojure Jython interop
-   [clojure-python "0.4.1"]
+   [clojure-python "1.0.0"]
    [midje "1.9.6"]
 
 
