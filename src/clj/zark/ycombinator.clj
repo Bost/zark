@@ -1,13 +1,10 @@
-(ns ^{:doc
-      "Higher order fn satisfying:
- y f = f (y f) for all f"}
-    zark.ycombinator)
+(ns zark.ycombinator
+  " Higher order fn satisfying: y f = f (y f) for all f")
 
 "Print evaluated expression and return its res"
 (defmacro dbg [x]
   `(let [x# ~x]
-     (println '~x "=" x#) x#
-     ))
+     (println '~x "=" x#) x#))
 
 (defn Y [f]
   ((fn [x]

@@ -1,6 +1,6 @@
-(ns ^{:doc "Simple http server: http://localhost:8080/"}
-    zark.server
-  (:use ring.adapter.jetty))
+(ns zark.web-server
+  "Simple http server: http://localhost:8080/"
+  (:use [ring.adapter.jetty]))
 
 (defn handler [request]
   {:status 200

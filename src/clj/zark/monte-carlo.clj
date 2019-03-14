@@ -1,4 +1,5 @@
-(ns zark.montecarlo)
+(ns zark.monte_carlo
+  "https://rosettacode.org/wiki/Monte_Carlo_methods#Clojure")
 
 (defn inside-circle? [x y]
   (<= (+ (* x x) (* y y))

@@ -1,9 +1,7 @@
 (ns zark.transducers
   ;; transform (multiple times) and then reduce
   (:require
-   [clojure.core.async :refer [>! <! <!!] :as a]
-   [clj-time-ext.core :as t]
-   [utils.core :refer [sjoin]]))
+   [clojure.core.async :refer [>! <! <!!] :as async]))
 
 ;; (map inc) returns a transducer, i.e. fn expecting one param - an reducing fn
 (def inc-and-filter
@@ -103,23 +101,23 @@
 
 (defn process [items]
   (let [;; create out-channel with buffer size of 1 and a transducer
-        out (a/chan 1 xform)
+        out (async/chan 1 xform)
         ;; create in-channel containing items
-        in (a/to-chan items)]
-    (a/go-loop [] ;; here the go-loop works sequentially
+        in (async/to-chan items)]
+    (async/go-loop [] ;; here the go-loop works sequentially
       ;; take out from the in-channel and store to item
       (if-some [item (<! in)]
         (do
           (>! out item) ;; put item to the out-channel
           (recur))
-        (a/close! out)))
+        (async/close! out)))
     ;; conjoin the content of the out-channel to a vector and return in
-    (<!! (a/reduce conj [] out))))
+    (<!! (async/reduce conj [] out))))
 
 (defn process [items]
-  (let [out (a/chan (a/buffer 100))]
-    (a/pipeline 4 out xform (a/to-chan items))
-    (<!! (a/reduce conj [] out))))
+  (let [out (async/chan (async/buffer 100))]
+    (async/pipeline 4 out xform (async/to-chan items))
+    (<!! (async/reduce conj [] out))))
 
 (process (range 10))
 
@@ -129,11 +127,11 @@
       ([] (reducer))          ;; e.g. (+)       => 0
       ([init] (reducer init)) ;; e.g. (+ 100)   => 100
       ([init coll-elem]       ;; e.g. (+ 100 1) => 101
-       (let [msg (-> [(format "[%s]" (t/tstp5))
+       (let [msg (-> [(format "[%s]" (clj-time-ext.core/tstp5))
                       "reducer-init-val" init
                       "composition-step" comp-step
                       "coll-elem-val" coll-elem]
-                     sjoin)]
+                     utils.core/sjoin)]
          ;; reversed print order of composition-steps (1 0) and timestamps
          #_(let [result (reducer init coll-elem)]
            (if comp-step
@@ -178,3 +176,38 @@
     (map #(* % -1)))
    + 100
    (range 5))) ;; (range 5) => (0 1 2 3 4)
+
+;; transducer fun
+(def xform (comp
+            (map inc)
+            (filter even?)
+            (dedupe)
+            (mapcat range)
+            (partition-all 3)
+            (partition-by #(< (apply + %) 7))
+            (mapcat flatten)
+            (random-sample 1.0)
+            (take-nth 1)
+            (keep #(when (odd? %) (* % %)))
+            (keep-indexed #(when (even? %1) (* %1 %2)))
+            (replace {2 "two" 6 "six" 18 "eighteen"})
+            (take 11)
+            (take-while #(not= 300 %))
+            (drop 1)
+            (drop-while string?)
+            (remove string?)))
+
+(def data (vec (interleave (range 18) (range 20))))
+
+;; lazily transform the data
+(sequence xform data)
+;; reduce with a transformation (no laziness)
+(transduce xform + 0 data)
+;; build one collection from a transformation of another, again no laziness
+(into [] xform data)
+;; create a recipe for a transformation, which can be subsequently sequenced, iterated or reduced
+(iteration xform data)
+;; transform everything that goes through a channel - same transducer stack!
+(let [c (async/chan 1 xform)]
+  (async/thread (async/onto-chan c data))
+  (async/<!! (async/into [] c)))

@@ -35,9 +35,10 @@
 
 (defn q-learning
   "
-  Discount factor Gamma
-  Learning grade Alpha
-  Starting state s0
+  Number of iterations: episodes
+  Discount factor: gamma
+  Learning grade: alpha
+  Starting state: s0
   "
   [:keys [episodes gamma alpha s0 terminal?
           actions transition reward]]
