@@ -14,7 +14,7 @@
    [org.clojure/algo.monads "0.1.6"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
-   [sablono "0.8.5"] ; hiccup style templating for om-next
+   [sablono "0.8.6"] ; hiccup style templating for om-next
 
    ;; webapp - begin
    [re-frame "0.10.6"]
@@ -29,20 +29,20 @@
    [ring "1.7.1"]
    [compojure "1.6.1"]
    ;; [compojure "1.6.1" :exclusions [commons-codec org.clojure/tools.macro]]
-   [garden "1.3.6"] ; render CSS
+   [garden "1.3.9"] ; render CSS
    [com.andrewmcveigh/cljs-time "0.5.2"] ;; (time/now) in cljs
    ;; webapp - end
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
    [org.clojure/java.jdbc "0.7.9"]
-   [com.mchange/c3p0 "0.9.5.3"] ; db connection pooling
-   [mysql/mysql-connector-java "8.0.15"]
+   [com.mchange/c3p0 "0.9.5.4"] ; db connection pooling
+   [mysql/mysql-connector-java "8.0.16"]
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
    [org.clojure/core.contracts "0.0.6"]
    [org.clojure/core.memoize "0.7.1"]
 
-   [org.clojure/core.match "0.3.0-alpha5"] ; pattern matching library
+   [org.clojure/core.match "0.3.0"] ; pattern matching library
 
    [utils "0.0.0-21-0xd148"] ;; pulls in also clj-time-ext
 
@@ -55,7 +55,7 @@
    ;; [com.draines/postal "1.11.3"]            ; sending emails
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
-   [funcool/cuerdas "2.1.0"] ; string manipulation - (str/surround % "'")
+   [funcool/cuerdas "2.2.0"] ; string manipulation - (str/surround % "'")
    ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
    [org.clojure/core.typed "0.6.0" :classifier "slim"] ;; slim vs. fat/ueberjar
 
@@ -80,16 +80,16 @@
    [org.python/jython-standalone "2.7.1"]
    ;; Clojure Jython interop
    [clojure-python "1.0.0"]
-   [midje "1.9.6"]
+   [midje "1.9.8"]
 
 
    [halfling "1.2.1"]
    ]
   :plugins
   [;; a plugin to tell you your code is bad, and that you should feel bad
-   [lein-bikeshed "0.5.1"]
+   [lein-bikeshed "0.5.2"]
    ;; Drive leiningen project version from git instead of the other way around
-   [com.roomkey/lein-v "7.0.0"]
+   [com.roomkey/lein-v "7.1.0"]
    [lein-figwheel "0.5.18" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    ;; autocompile theGarden stylesheets - see the [garden "..."] dependency
