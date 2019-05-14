@@ -59,3 +59,8 @@
 ;; (t/broken? crucial-maths)
 
 ;; (t/get! (t/run-async crucial-maths))
+
+;; clojureD 2019: Robert Avram https://youtu.be/Ekngl04XcdU?t=857
+(defrecord Task (fns result))
+#_(defmacro task [body]
+  ...)
