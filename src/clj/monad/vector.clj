@@ -86,7 +86,7 @@
 ;; m-plus is optional; Type signature: m-plus: m a -> m a -> m a
 ;; by defining an associative m-plus operation and it's identity we get a monoid
 ;; over a set of monadic values
-(defn m-plus [m-val1 m-val2] (map (fn [v1 v2] (+ v1 v2)) m-val1 m-val2))
+(defn m-plus [& m-vals] (apply map + m-vals))
 
 (defn f [x] (+ x x))
 (defn g [n] (+ 1 n))
@@ -104,8 +104,7 @@
        (= (m-bind (m-result 3) m-result)
           (m-result 3))
        (= (m-bind (m-result 3) m-zero)
-          (m-zero 3))
-       ))
+          (m-zero 3))))
 
 (defn test-monad-laws-assoc
   "Associativity law: μ ∘ Tμ = μ ∘ μT"
