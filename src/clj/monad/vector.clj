@@ -70,18 +70,22 @@
 (defn bind "μ: T^2 -> T" [mv f]
   (f (first mv)))
 
+;;;; ad-hoc monad & monoid definition:
 
 ;; m-result is required. Type signature: m-result: a -> m a
-(defn m-result [x] [x])
+(defn m-result [x] (list x))
 
 ;; m-bind is required. Type signature: m-bind: m a -> (a -> m b) -> m b
-(defn m-bind [m-val m-func] (m-func (first m-val)))
+;; There's no "extract value from monad (i.e. monadic container)!"
+(defn m-bind [m-val m-func] (map m-func m-val))
 
 ;; m-zero is optional; Type signature: m-zero: a -> m a
 (defn m-zero [_] (m-result 0))
 
 ;; m-plus is optional; Type signature: m-plus: m a -> m a -> m a
-(defn m-plus [m-val1 m-val2] (m-result (+ (first m-val1) (first m-val2))))
+;; by defining an associative m-plus operation and it's identity we get a monoid
+;; over a set of monadic values
+(defn m-plus [m-val1 m-val2] (map (fn [v1 v2] (+ v1 v2)) m-val1 m-val2))
 
 (defn f [x] (+ x x))
 (defn g [n] (+ 1 n))
