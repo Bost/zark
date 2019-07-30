@@ -76,7 +76,8 @@
 (defn m-result [x] (list x))
 
 ;; m-bind is required. Type signature: m-bind: m a -> (a -> m b) -> m b
-;; There's no "extract value from monad (i.e. monadic container)!"
+;; There's no "Extract value from monad (i.e. monadic container)!" in an
+;; analogous way as in "There's no *the* value in a collection (i.e. a list)"
 (defn m-bind [m-val m-func] (map m-func m-val))
 
 ;; m-zero is optional; Type signature: m-zero: a -> m a
