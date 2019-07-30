@@ -78,10 +78,11 @@
 ;; m-bind is required. Type signature: m-bind: m a -> (a -> m b) -> m b
 ;; There's no "Extract value from monad (i.e. monadic container)!" in an
 ;; analogous way as in "There's no *the* value in a collection (i.e. a list)"
-(defn m-bind [m-val m-func] (map m-func m-val))
+(defn m-bind [m-val m-func] (flatten (map m-func m-val)))
 
-;; m-zero is optional; Type signature: m-zero: a -> m a
-(defn m-zero [_] (m-result 0))
+;; m-zero is optional; Type signature: m-zero: * -> m a
+;; * - kind; i.e. any type(s)
+(defn m-zero [& _] (m-result 0))
 
 ;; m-plus is optional; Type signature: m-plus: m a -> m a -> m a
 ;; by defining an associative m-plus operation and it's identity we get a monoid
@@ -103,20 +104,29 @@
           (mf 3))
        (= (m-bind (m-result 3) m-result)
           (m-result 3))
-       (= (m-bind (m-result 3) m-zero)
-          (m-zero 3))))
+
+       ;; identity with respect to zero
+       (= (m-bind (m-zero) mf)
+          (mf 0))
+       (= (m-bind (m-zero) m-result)
+          (m-result 0))
+
+       ;; symetry of plus with respect to zero: a + 0 = 0 + a = a
+       (= (m-plus (m-result 3) (m-zero))
+          (m-plus (m-zero) (m-result 3))
+          (m-result 3))))
 
 (defn test-monad-laws-assoc
   "Associativity law: μ ∘ Tμ = μ ∘ μT"
   []
   (= (m-bind (m-bind (m-result 3) mf) mg)
-     (m-bind (m-result 3) (fn [x] (m-bind (mf x) mg)))))
+     (m-bind (m-result 3) (fn [x] (m-bind (mf x) mg))))
+  ;; symetry: a + b = b + a
+  (= (m-plus (m-result 3) (m-result 6))
+     (m-plus (m-result 6) (m-result 3))
+     (m-result (+ 3 6)))
 
-(defn test-monad-laws-identity-zero-plus
-  "Identity law: μ ∘ Tη = μ ∘ ηT = idT"
-  []
-  (and (= (m-plus (m-result 3) (m-zero 3))
-          (m-plus (m-zero 3) (m-result 3))
-          (m-result 3))
-       (= (m-plus (m-result 3) (m-result 6))
-          (m-plus (m-result 6) (m-result 3)))))
+  (let [m-plus-3-6 (m-plus (m-result 3) (m-result 6))
+        m-plus-6-3 (m-plus (m-result 6) (m-result 3))]
+    (= (m-bind (m-bind m-plus-3-6 mf) mg)
+       (m-bind m-plus-6-3 (fn [x] (m-bind (mf x) mg))))))
