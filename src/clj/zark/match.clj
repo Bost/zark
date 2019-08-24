@@ -42,7 +42,7 @@ https://youtu.be/OyfBQmvr2Hc"}
 ;; (eval-expr '(+ 1 2 3) env)
 
 ;; TODO recursion as a start-stop-work pattern: search for 'recur' in the code.
-(defun zipmap
+(defun my-zipmap
   ([keys vals] (recur {} (seq keys) (seq vals))) ;; start
   ([map ks :guard empty? vs              ] map)  ;; stop
   ([map ks               vs :guard empty?] map)  ;; stop
