@@ -29,7 +29,7 @@
    [ring "1.7.1"]
    [compojure "1.6.1"]
    ;; [compojure "1.6.1" :exclusions [commons-codec org.clojure/tools.macro]]
-   [garden "1.3.9"] ; render CSS
+   ;; [garden "1.3.9"] ; render CSS; see the :garden config below pf
    [com.andrewmcveigh/cljs-time "0.5.2"] ;; (time/now) in cljs
    ;; webapp - end
 
@@ -138,9 +138,10 @@
          ;; Leads to Error loading cemerick.piggieback ...
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
          :source-paths ["src/cljs" "src/clj"]}}
-  :garden
-  {:builds [{:id "screen"
-             :source-paths ["src/clj"]
-             :stylesheet ufo.css/screen
-             :compiler {:output-to "resources/public/css/style.css"
-                        :pretty-print? true}}]})
+  ;; :garden
+  ;; {:builds [{:id "screen"
+  ;;            :source-paths ["src/clj"]
+  ;;            :stylesheet ufo.css/screen
+  ;;            :compiler {:output-to "resources/public/css/style.css"
+  ;;                       :pretty-print? true}}]}
+  )
