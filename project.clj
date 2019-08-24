@@ -96,7 +96,11 @@
    [lein-garden "0.3.0"]
    ;; autorecompile changed java files
    [lein-virgil "0.1.9"]]
-  :java-source-paths ["javasrc"]
+  ;; Using :java-source-paths causes:
+  ;;         'recompiling all files in ...'
+  ;; and subsequent error:
+  ;;         'REPL server launch timed out'
+  ;; :java-source-paths ["javasrc"]
   ;; TODO: uncomment for autorun :main zark.core
   ;; The namespace will be auto loaded when a repl is started.
 
