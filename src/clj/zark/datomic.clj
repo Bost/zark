@@ -21,9 +21,9 @@
         (println s "==" res)
         (println s "!=" res)))))
 
-(z 2 1)
-(z 2 2)
-(z 2 3)
+;; (z 2 1)
+;; (z 2 2)
+;; (z 2 3)
 
 (defn zz [p1 p2 res]
   ^{:doc "Apply all functions from fns to p1 and p2, each time compare result
@@ -35,9 +35,9 @@
         (println s "==" res)
         (println s "!=" res)))))
 
-(zz 2 2 2)
-(zz 2 2 4)
-(zz 2 2 5)
+;; (zz 2 2 2)
+;; (zz 2 2 4)
+;; (zz 2 2 5)
 
 "Print evaluated expression and return its res"
 (defmacro dbg [x]
@@ -102,9 +102,9 @@
       (recur (rest coll)
              (inc-if-match (first coll) cnt sample) sample))))
 
-(cnt-samples '(1 defn 3 2 defn 2 defn) 'defn)
+;; (cnt-samples '(1 defn 3 2 defn 2 defn) 'defn)
 
-(println "Loaded")
+;; (println "Loaded")
 
 ;(comment
   ;[:find ?var ?def ?cq ?t
@@ -131,7 +131,7 @@
     [(file-commits ?f ?c) (object-nodes ?f ?n) [?c :commit/tree ?n]]
     [(codeq-commits ?cq ?c) [?cq :codeq/file ?f] (file-commits ?f ?c)]])
 
-(println "Go go go!")
+;; (println "Go go go!")
 
 (defn go []
   (q '[:find ?src (min ?date)
@@ -148,4 +148,4 @@
      (db conn) rules
      "zark.core/z"))
 
-(go)
+;; (go)

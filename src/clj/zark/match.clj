@@ -37,9 +37,9 @@ https://youtu.be/OyfBQmvr2Hc"}
                                 (eval-expr op-rand env))))
 
 (def env (fn [expr] (println "Unbound expr:" expr)))
-(eval-expr '(((fn [x] x) (fn [y] y)) 5) env)
-(eval-expr '(inc 1) env)
-(eval-expr '(+ 1 2 3) env)
+;; (eval-expr '(((fn [x] x) (fn [y] y)) 5) env)
+;; (eval-expr '(inc 1) env)
+;; (eval-expr '(+ 1 2 3) env)
 
 ;; TODO recursion as a start-stop-work pattern: search for 'recur' in the code.
 (defun zipmap
@@ -50,12 +50,12 @@ https://youtu.be/OyfBQmvr2Hc"}
    (recur (assoc map (first ks) (first vs))
           (next ks) (next vs))))
 
-(letfn [(twice [x]
-          (* x 2))
-        (six-times [y]
-          (* (twice y) 3))]
-  (println "Twice 15 =" (twice 15))
-  (println "Six times 15 =" (six-times 15)))
+;; (letfn [(twice [x]
+;;           (* x 2))
+;;         (six-times [y]
+;;           (* (twice y) 3))]
+;;   (println "Twice 15 =" (twice 15))
+;;   (println "Six times 15 =" (six-times 15)))
 
 ;; A contrived example of mutual recursion
 (defn even2? [n]
