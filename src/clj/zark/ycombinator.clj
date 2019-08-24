@@ -1,5 +1,5 @@
 (ns zark.ycombinator
-  " Higher order fn satisfying: y f = f (y f) for all f")
+  "Higher order fn satisfying: y f = f (y f) for all f")
 
 "Print evaluated expression and return its res"
 (defmacro dbg [x]
@@ -19,16 +19,14 @@
     1
     (* n (factorial (dec n)))))
 
-
-; We want to define an anonymous function which we want to apply to itself
-; and we want to start this function with n = 6
-;(
-      ;(fn [n]
-        ;(if (zero? n)
-          ;1
-          ;(* n (?? (dec n)))))
-       ;6
-;)
+;; We want to define an anonymous function which we want to apply to itself
+;; and we want to start this function with n = 6
+(comment
+  (fn [n]
+    (if (zero? n)
+      1
+      (* n (?? (dec n)))))
+  6)
 
 ((Y (fn [rec]
       (fn [n]
