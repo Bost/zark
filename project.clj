@@ -5,6 +5,7 @@
   :dependencies
   [
    [org.clojure/clojure "1.10.0"]
+   [org.clojure/spec.alpha "0.2.176"]
    [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
    [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
@@ -136,6 +137,7 @@
                                       org.clojure/tools.analyzer.jvm]]
                         [org.clojure/test.check "0.9.0"] ; for clojure.spec
                         [cider/piggieback "0.4.0"]
+                        ;; [com.cemerick/piggieback "0.2.2"]
                         [ns-tracker "0.3.1"]
                         [binaryage/devtools "0.9.10"]
                         ]
