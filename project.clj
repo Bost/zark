@@ -4,13 +4,13 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
   [
-   [org.clojure/clojure "1.10.0"]
+   [org.clojure/clojure "1.10.1"]
    [org.clojure/spec.alpha "0.2.176"]
-   [defun "0.3.0-RC1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
+   [defun "0.3.1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
    [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
    ;; see https://dev.clojure.org/jira/browse/CRRBV-18
-   [org.clojure/core.rrb-vector "0.0.14"]
+   [org.clojure/core.rrb-vector "0.1.1"]
    [org.clojure/core.logic "0.8.11"]
    [org.clojure/algo.monads "0.1.6"]
 
@@ -18,7 +18,7 @@
    [sablono "0.8.6"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [re-frame "0.10.6"]
+   [re-frame "0.10.9"]
    [secretary "1.2.3"]
    [org.clojure/clojurescript "1.10.520" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.5.0"] ; more convenient dom elements
@@ -36,12 +36,12 @@
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
-   [org.clojure/java.jdbc "0.7.9"]
+   [org.clojure/java.jdbc "0.7.10"]
    [com.mchange/c3p0 "0.9.5.4"] ; db connection pooling
-   [mysql/mysql-connector-java "8.0.16"]
+   [mysql/mysql-connector-java "8.0.18"]
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
    [org.clojure/core.contracts "0.0.6"]
-   [org.clojure/core.memoize "0.7.1"]
+   [org.clojure/core.memoize "0.7.2"]
 
    [org.clojure/core.match "0.3.0"] ; pattern matching library
 
@@ -81,7 +81,7 @@
    [org.python/jython-standalone "2.7.1"]
    ;; Clojure Jython interop
    [clojure-python "1.0.0"]
-   [midje "1.9.8"]
+   [midje "1.9.9"]
 
 
    [halfling "1.2.1"]
@@ -91,7 +91,7 @@
    [lein-bikeshed "0.5.2"]
    ;; Drive leiningen project version from git instead of the other way around
    [com.roomkey/lein-v "7.1.0"]
-   [lein-figwheel "0.5.18" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.19" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.7"]
    ;; autocompile theGarden stylesheets - see the [garden "..."] dependency
    [lein-garden "0.3.0"]
@@ -130,15 +130,15 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.18"
+   :dev {:dependencies [[figwheel-sidecar "0.5.19"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
-                        [org.clojure/test.check "0.9.0"] ; for clojure.spec
-                        [cider/piggieback "0.4.0"]
+                        [org.clojure/test.check "0.10.0"] ; for clojure.spec
+                        [cider/piggieback "0.4.2"]
                         ;; [com.cemerick/piggieback "0.2.2"]
-                        [ns-tracker "0.3.1"]
+                        [ns-tracker "0.4.0"]
                         [binaryage/devtools "0.9.10"]
                         ]
          ;; Leads to Error loading cemerick.piggieback ...
