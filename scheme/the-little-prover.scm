@@ -1,5 +1,4 @@
 ;; M-x run-scheme
-
 (define j-bob-home "~/dev/j-bob/scheme/")
 
 ;; Load the J-Bob language:
