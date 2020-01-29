@@ -7,7 +7,8 @@ import clojure.java.api.Clojure;
 // (ns my.bla)
 // (def foo-str "my.bla/foo-str")
 // (defn foo-fn [] "(my.bla/foo-fn)")
-// (defn -main [& args] (str "(my.bla/-main " args ")"))
+// (defn -main [& args]
+//        (str "(my.bla/-main " args ") ; (count args): " (count args)))
 
 public class Main2 {
     public static void main(String[] args) {
@@ -35,9 +36,53 @@ public class Main2 {
         String mainFn = "undef mainFn";
         try {
             IFn minusMain = Clojure.var(ns, "-main");
-            // TODO this doesn't work. I need to call intoArray.invoke(...)
-            String args = "(into-array String [\"aaa\" \"bbb\"])";
-            mainFn = minusMain.invoke(Clojure.read(args)).toString();
+            switch (SpringbootApplication.xArgs.length) {
+            case 0:
+                mainFn = minusMain.invoke().toString();
+                break;
+            case 1:
+                mainFn = minusMain.invoke(SpringbootApplication.xArgs[0]).toString();
+                break;
+            case 2:
+                mainFn = minusMain.invoke(
+                                          SpringbootApplication.xArgs[0],
+                                          SpringbootApplication.xArgs[1]
+                                          ).toString();
+                break;
+            case 3:
+                mainFn = minusMain.invoke(
+                                          SpringbootApplication.xArgs[0],
+                                          SpringbootApplication.xArgs[1],
+                                          SpringbootApplication.xArgs[2]
+                                          ).toString();
+                break;
+            case 4:
+                mainFn = minusMain.invoke(
+                                          SpringbootApplication.xArgs[0],
+                                          SpringbootApplication.xArgs[1],
+                                          SpringbootApplication.xArgs[2],
+                                          SpringbootApplication.xArgs[3]
+                                          ).toString();
+                break;
+            case 5:
+                mainFn = minusMain.invoke(
+                                          SpringbootApplication.xArgs[0],
+                                          SpringbootApplication.xArgs[1],
+                                          SpringbootApplication.xArgs[2],
+                                          SpringbootApplication.xArgs[3],
+                                          SpringbootApplication.xArgs[4]
+                                          ).toString();
+                break;
+            case 6:
+                mainFn = minusMain.invoke(
+                                          SpringbootApplication.xArgs[0],
+                                          SpringbootApplication.xArgs[1],
+                                          SpringbootApplication.xArgs[2],
+                                          SpringbootApplication.xArgs[3],
+                                          SpringbootApplication.xArgs[4],
+                                          SpringbootApplication.xArgs[5]).toString();
+                break;
+            }
         }
         catch(Exception e) {
             e.printStackTrace();
