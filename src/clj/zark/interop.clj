@@ -73,3 +73,5 @@
 ((get-static-fn org.domain.Main "main") (into-array String ["aaa" "bbb"]))
 ;; => main: args: aaa, bbb
 ;; => nil
+
+#_(org.domain.Main/main (into-array String ["aaa" "bbb"]))
