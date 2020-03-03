@@ -1,10 +1,15 @@
 (ns zark.web-server
   "Simple http server: http://localhost:8080/"
-  (:use [ring.adapter.jetty]))
+  (:require [ring.adapter.jetty :as jetty]
+            [clojure.data.json :as json]))
 
 (defn handler [request]
   {:status 200
    :headers {"Content-Type" "text/plain"}
-   :body "Hello World"})
+   :body
+   (json/write-str {:chat_id "112885364" :text "Hello from zark.web-server"})
+   #_(json/write-str "Hello from zark.web-server")})
 
-(run-jetty handler {:port 8080})
+(defonce server (jetty/run-jetty handler {:port 8080 :join? false}))
+(defn start [] (.start server))
+(defn stop [] (.stop server))

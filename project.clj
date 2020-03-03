@@ -46,7 +46,7 @@
 
    [org.clojure/core.match "0.3.0"] ; pattern matching library
 
-   [utils "0.0.0-21-0xd148"] ;; pulls in also clj-time-ext
+   [org.clojars.bost/utils "0.0.0-31-0x566f"] ;; pulls in also clj-time-ext
 
    ;; quartzite dependency on slf4j-api should be auto-resolved
    ;; [org.slf4j/slf4j-nop "1.7.13"] ; Simple Logging Facade for Java
@@ -86,7 +86,8 @@
 
 
    [halfling "1.2.1"]
-   ]
+
+   [org.clojure/data.json "0.2.7"]]
   :plugins
   [;; a plugin to tell you your code is bad, and that you should feel bad
    [lein-bikeshed "0.5.2"]

@@ -102,11 +102,17 @@
 ;; }}}
 
 ;; Examples {{{
-(call/cc
- (lambda (k)
+;; See also https://youtu.be/Ju3KKu_mthg?t=1167
+(call/cc  ;; call/cc saves the current stack state `s0' into the variable `k'
+ (lambda (k)   ;; `lambda' creates the next stack `s1' on top of `s0'.
    ;; (error (k "foo"))
-   ;; the current computation `(/ 30 5 3)' is effectivelly ignored
-   (/ 30 5 (k 1) 3)))
+   (/ 30
+      5
+      ;; (k 1) restores the stack state `s0' and passes it `1' as if `1' were
+      ;; computed by the stack frame `s1', i.e. the current computation of the
+      ;; stack frame `s1: (/ 30 5 3)' is effectively ignored.
+      (k 1)
+      3)))
 ;; => 1
 
 (((call/cc
