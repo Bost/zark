@@ -93,14 +93,6 @@
 (call/cc (lambda (k) 1))
 ;; }}}
 
-
-;; {{{
-;; `call/cc' alias for `call-with-current-continuation'
-;; https://www.gnu.org/software/guile/manual/html_node/Continuations.html
-(call-with-current-continuation (lambda (k) 1))
-(call/cc (lambda (k) 1))
-;; }}}
-
 ;; Examples {{{
 ;; See also https://youtu.be/Ju3KKu_mthg?t=1167
 (call/cc  ;; call/cc saves the current stack state `s0' into the variable `k'
