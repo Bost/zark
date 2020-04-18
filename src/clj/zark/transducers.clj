@@ -1,27 +1,51 @@
 (ns zark.transducers
-  ;; transform (multiple times) and then reduce
+  {:doc
+   "Transform any sequence (seq, async channel, maybe observable), possibly
+   multiple times and then reduce it."}
   (:require
+   [clj-time-ext.core]
+   [utils.core]
    [clojure.core.async :refer [>! <! <!!] :as async]))
 
-;; (map inc) returns a transducer, i.e. fn expecting one param - an reducing fn
-(def inc-and-filter
-  "At first (filter odd?) then (map inc) then indentity"
-  (comp
-   (map inc)
-   (filter odd?)
-   identity))
+;; TODO literate programming in clojure
+;; https://github.com/gdeer81/marginalia
 
-(def special+ (inc-and-filter +))
-(special+ 1 1)
-;; 1
-(special+ 1 2)
+;; https://groups.google.com/forum/#!topic/clojure/FXMCgqfLiuE
 
-(reduce + 0 (range 10)) ;; 45
-(reduce special+ 0 (range 10)) ;; 25
-(reduce + 0 (filter odd? (map inc (range 10)))) ;; 25
-(reduce + 0 (->> (range 10)
-                 (map inc)
-                 (filter odd?))) ;; 25
+(def inc-and-filter-xform
+  "`(map inc)` and `(filter odd?)` are transducing functions, a.k.a xforms, xfs.
+
+  Transducer signature:
+  `(typeX, input -> typeX) -> (typeY, input -> typeY)` I.e. transducer is a
+  function of one argument. The type of this argument is an arrow-type, i.e. it
+  is function itself and it has two arguments.
+
+  Ordering of transducer fns in `comp` is the same order as sequence
+  transformations in `->>`. I.e. at first `(map inc)` then `(filter odd?)`.
+
+  However ordering of a plain `comp` is reversed:
+  ((comp str inc) 1)    ;; => 2
+  ;; ((comp inc str) 1) ;; exception: String cannot be cast to Number
+
+  In the end the composition returns a transducer (xform, xf) itself, i.e. a
+  function of one argument."
+  (comp (map inc)
+        (filter odd?)))
+
+(def special+
+  "Applies the `inc-and-filter-xform` on the reducing function `+` and creates a
+  function of the same type as the `+` function."
+  (inc-and-filter-xform +))
+
+(special+ 1 1) ;; => 1
+(special+ 1 2) ;; => 4
+
+(reduce +        0 (range 10))                         ;; => 45
+(reduce special+ 0 (range 10))                         ;; => 25
+(reduce +        0 (filter odd? (map inc (range 10)))) ;; => 25
+(reduce +        0 (->> (range 10)
+                        (map inc)
+                        (filter odd?)))                ;; => 25
 
 (->> (range 10)    ;; seq of values
      (map inc)     ;; mapping
@@ -29,65 +53,51 @@
      (reduce + 0)) ;; reducing
 ;; => 25
 
-(def map-filter
-  (comp
-   (map inc)
-   (filter odd?)))
-
 ;; threading macros allow just one level of composition:
 (->> (range 10)
-     ;; mapping/filtering/removing can invoked step-by-step
+     ;; `map`, `filter`, `remove` can be invoked step-by-step
      (map inc)
      (filter odd?)
-     ;; but it can't be explicitelly composed
-     #_
-     (comp
-      (map inc)
-      (filter odd?))
-     ;; neither this can't be used
-     #_map-filter
+     ;; but they can't be explicitly composed:
+     ;; (comp (map inc) (filter odd?))  ;; gives error
      (reduce + 0))
 ;; => 45
 
 (let [u 1
       v 2]
-  (transduce
-   (comp
-    (map #(+ u %))
-    (map #(+ v %)))
-   + 0
-   (range 5)))
+  (transduce (comp
+              (map #(+ u %))
+              (map #(+ v %)))
+             + 0
+             (range 5)))
 ;; => 25
 
-(transduce
- identity
- conj []
+(def xform (comp (map inc) (map str)))
+(transduce xform conj [] (range 5)) ;; => ["1" "2" "3" "4" "5"]
+;; `into` also can accepts a transducer:
+(into [] xform (range 5))           ;; => ["1" "2" "3" "4" "5"]
+
+(transduce identity
+ (fn [& args]
+   (vec (flatten (vector args)))
+   #_((comp vec flatten vector) args)
+   #_(->> args ((comp vec flatten vector)))
+   #_(->> args (vector) (flatten) (vec)))
+ []
  (range 5))
 ;; => [0 1 2 3 4]
 
 (transduce
- identity
- (fn [& args] (vec (flatten (vector args)))) []
- (range 5))
-;; => [0 1 2 3 4]
-
-(transduce
- (comp
-  (map inc)
-  identity)
+ (comp (map inc) identity) ;; the xform
  (fn [& args] (vec (flatten (vector args)))) []
  (range 5))
 ;; => [1 2 3 4 5]
 
-(defn x-fn1 [u v]
-  (comp
-   (map #(+ u %))
-   (map #(+ v %))))
+(defn x-fn1 [u v] (comp (map #(+ u %))
+                        (map #(+ v %))))
 
-(defn x-fn2 [u v]
-  (map (comp
-        #(+ u %)
-        #(+ v %))))
+(defn x-fn2 [u v] (map (comp #(+ u %)
+                             #(+ v %))))
 
 (let [u 1
       v 2
@@ -177,6 +187,24 @@
    + 100
    (range 5))) ;; (range 5) => (0 1 2 3 4)
 
+(defn xf-sort
+  "A sorting transducer. Mostly a syntactic improvement to allow composition of
+  sorting with the standard transducers, but also provides a slight performance
+  increase over transducing, sorting, and then continuing to transduce."
+  ([]
+   (xf-sort compare))
+  ([cmp]
+   (fn [rf]
+     (let [temp-list (java.util.ArrayList.)]
+       (fn
+         ([]
+          (rf))
+         ([xs]
+          (reduce rf xs (sort cmp (vec (.toArray temp-list)))))
+         ([xs x]
+          (.add temp-list x)
+          xs))))))
+
 ;; transducer fun
 (def xform (comp
             (map inc)
@@ -206,8 +234,33 @@
 ;; build one collection from a transformation of another, again no laziness
 (into [] xform data)
 ;; create a recipe for a transformation, which can be subsequently sequenced, iterated or reduced
-(iteration xform data)
+(iterate xform data)
 ;; transform everything that goes through a channel - same transducer stack!
 (let [c (async/chan 1 xform)]
   (async/thread (async/onto-chan c data))
   (async/<!! (async/into [] c)))
+
+;; Different possibilities how write dataflow queries https://stackoverflow.com/a/26322910
+;; 1. nested calls:
+(reduce + (filter odd? (map #(+ 2 %) (range 0 10))))
+
+;; 2. functional composition:
+(def xform
+  (comp
+   (partial filter odd?)
+   (partial map #(+ 2 %))))
+(reduce + (xform (range 0 10)))
+
+;; 3. threading macro:
+(defn xform [xs]
+  (->> xs
+       (map #(+ 2 %))
+       (filter odd?)))
+(reduce + (xform (range 0 10)))
+
+;; 4. transducers:
+(def xform
+  (comp
+   (map #(+ 2 %))
+   (filter odd?)))
+(transduce xform + (range 0 10))
