@@ -88,9 +88,10 @@
 ;; => [0 1 2 3 4]
 
 (transduce
- (comp (map inc) identity) ;; the xform
- (fn [& args] (vec (flatten (vector args)))) []
- (range 5))
+ (comp (map inc) identity)                   ;; the xform
+ (fn [& args] (vec (flatten (vector args)))) ;; reducing fn (a.k.a reducer)
+ []                                          ;; init val of the reducer
+ (range 5))                                  ;; the coll to transform & reduce
 ;; => [1 2 3 4 5]
 
 (defn x-fn1 [u v] (comp (map #(+ u %))
@@ -226,6 +227,8 @@
             (remove string?)))
 
 (def data (vec (interleave (range 18) (range 20))))
+;; => [0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9 10 10 11 11 12 12 13 13 14 14 15
+;; 15 16 16 17 17]
 
 ;; lazily transform the data
 (sequence xform data)
