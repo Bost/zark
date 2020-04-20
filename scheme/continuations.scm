@@ -125,6 +125,20 @@
 (foo (lambda (x) 5)) ;; => 3
 ;; }}}
 
+;; Chicken Scheme {{{
+;; Jonathan Bartlett: Continuations: The Swiss Army Knife of Flow Control
+;; https://youtu.be/Ju3KKu_mthg
+
+;; Ambiguous value operator: `amb'
+;; Yields one of those values, depending on which satisfies future constraints
+;; 28:55
+(import amb)
+(amb 1 2 3 4 5)
+;; Create assertions that have to be true. These do not have to directly involve
+;; the variables
+(amb-assert (> a b))
+;; }}}
+
 (define *x* '())  ;; global definition
 
 (lambda (x)
