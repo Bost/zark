@@ -268,10 +268,10 @@
    (filter odd?)))
 (transduce xform + (range 0 10))
 
+;; See https://clojure.org/guides/equality
 (def m=
-  "Equality transducer. Check that all collection elements are equal.
-  Better approach:
-  Split to head and tail and check `(every? (fn [e] (= e head)) tail)`'"
+  "(BUGGY) Equality transducer. Check that all collection elements are equal.
+  Contains `=`. Replacement with `m=` leads to StackOverflowError."
   (fn
     ([]
      (let [r ::init]
@@ -289,4 +289,102 @@
        #_(println "[Step      ]" "result:" result "input:" input "r:" r)
        r))))
 
-(transduce identity m= [2 2 2 2 2]) ;; => true
+(transduce identity m= [])    ;; => true
+(transduce identity m= [1])   ;; => true
+(transduce identity m= [1 1]) ;; => true
+(transduce identity m= [1 2]) ;; => false
+(= true (m= []))    ;; => true
+(= true (m= [1]))   ;; => true
+(= true (m= [1 1])) ;; => true
+;; (= false (m= [1 2])) ;; => true !!! BUG
+
+(defn m=
+  [coll]
+  (let [[head & tail] coll]
+    (every? (fn [e] (= e head)) tail)))
+
+(defn m=
+  [coll]
+  (or (empty? coll)
+      (apply = coll)))
+
+(defn m=
+  [coll]
+  (or (empty? coll)
+      (= (count (set coll)) 1)))
+
+(m= [])    ;; => true
+(m= [1])   ;; => true
+(m= [1 1]) ;; => true
+(m= [1 2]) ;; => false
+;; (transduce identity m= [])    ;; throws exception
+;; (transduce identity m= [1])   ;; throws exception
+;; (transduce identity m= [1 1]) ;; throws exception
+;; (transduce identity m= [1 2]) ;; throws exception
+
+(defn +
+  "Returns the sum of nums. (+) returns 0. Does not auto-promote
+  longs, will throw on overflow. See also: +'"
+  {:inline (nary-inline 'add 'unchecked_add)
+   :inline-arities >1?
+   :added "1.2"}
+  ([] 0)
+  ([x] (cast Number x))
+  ([x y] (. clojure.lang.Numbers (add x y)))
+  ([x y & more]
+   (reduce1 + (+ x y) more)))
+
+(defn -
+  "If no ys are supplied, returns the negation of x, else subtracts
+  the ys from x and returns the result. Does not auto-promote
+  longs, will throw on overflow. See also: -'"
+  {:inline (nary-inline 'minus 'unchecked_minus)
+   :inline-arities >0?
+   :added "1.2"}
+  ([x] (. clojure.lang.Numbers (minus x)))
+  ([x y] (. clojure.lang.Numbers (minus x y)))
+  ([x y & more]
+   (reduce1 - (- x y) more)))
+
+(let [f +
+      coll []
+      ;; coll nil
+      xf map
+      ]
+  (apply xf [f coll]))
+
+
+(= (identity f) f)
+(defn f [])
+
+;; Ugh 1.
+(= (identity (defn f [])) (defn f [])) ;; => true
+(= (identity (fn f [])) (fn f []))       ;; => false
+
+;; Ugh 2.
+((comp identity +)) ;; => 0
+((comp + identity)) ;; throws exception
+
+;; Ugh 3.
+(+) ;; => 0
+(-) ;; throws exception
+
+(=) ;; throws exception
+(*) ;; throws exception
+(/) ;; throws exception
+
+;; Ugh 4.
+(boolean) ;; throws exception
+(not) ;; throws exception
+(or)  ;; => nil
+(and) ;; => true
+
+(bit-or)  ;; exception
+(bit-and) ;; exception
+
+(bit-and 1) ;; exception
+(and 1)     ;; => 1
+
+;; TODO
+every?
+not-any?
