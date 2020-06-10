@@ -267,3 +267,26 @@
    (map #(+ 2 %))
    (filter odd?)))
 (transduce xform + (range 0 10))
+
+(def m=
+  "Equality transducer. Check that all collection elements are equal.
+  Better approach:
+  Split to head and tail and check `(every? (fn [e] (= e head)) tail)`'"
+  (fn
+    ([]
+     (let [r ::init]
+       #_(println "[Init      ]" "r:" r)
+       r))
+    ([result]
+     (let [r result]
+       #_(println "[Completion]" "result:" result "r:" r)
+       (not= result ::false)))
+    ([result input]
+     (let [r (if (or (= result input)
+                     (= result ::init))
+               input
+               ::false)]
+       #_(println "[Step      ]" "result:" result "input:" input "r:" r)
+       r))))
+
+(transduce identity m= [2 2 2 2 2]) ;; => true
