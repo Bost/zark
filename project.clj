@@ -4,13 +4,13 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies
   [
-   [org.clojure/clojure "1.10.1"]
-   [org.clojure/spec.alpha "0.2.187"]
+   [org.clojure/clojure "1.10.3"]
+   [org.clojure/spec.alpha "0.2.194"]
    [defun "0.3.1"] ;; macro to define clojure functions with pattern matching just as erlang or elixir
    [swiss-arrows "1.0.0"] ;; arrow macros
    [com.datomic/datomic-free "0.9.5697" :exclusions [joda-time]]
    ;; see https://dev.clojure.org/jira/browse/CRRBV-18
-   [org.clojure/core.rrb-vector "0.1.1"]
+   [org.clojure/core.rrb-vector "0.1.2"]
    [org.clojure/core.logic "1.0.0"]
    [org.clojure/algo.monads "0.1.6"]
 
@@ -18,17 +18,17 @@
    [sablono "0.8.6"] ; hiccup style templating for om-next
 
    ;; webapp - begin
-   [re-frame "0.12.0"]
+   [re-frame "1.2.0"]
    [secretary "1.2.3"]
-   [org.clojure/clojurescript "1.10.597" :exclusions [com.google.guava/guava]]
+   [org.clojure/clojurescript "1.10.773" :exclusions [com.google.guava/guava]]
    [prismatic/om-tools "0.5.0"] ; more convenient dom elements
    [org.omcljs/om "1.0.0-alpha22" :exclusions [commons-codec]] ;; is this needed?
 
    ;; Ring routing lib; dispatching of GET, PUT, etc.
    ;; describe how a web server communicates with web apps
    ;; and how web apps can be chained together to process one request
-   [ring "1.8.0"]
-   [compojure "1.6.1"]
+   [ring "1.9.2"]
+   [compojure "1.6.2"]
    ;; [compojure "1.6.1" :exclusions [commons-codec org.clojure/tools.macro]]
    ;; [garden "1.3.9"] ; render CSS; see the :garden config below pf
    [com.andrewmcveigh/cljs-time "0.5.2"] ;; (time/now) in cljs
@@ -36,10 +36,10 @@
 
    #_[org.clojure/tools.cli "0.3.5"] ; command line arguments
 
-   [org.clojure/java.jdbc "0.7.11"]
+   [org.clojure/java.jdbc "0.7.12"]
    [com.mchange/c3p0 "0.9.5.5"] ; db connection pooling
    ;; TODO https://github.com/LauJensen/clojureql
-   [mysql/mysql-connector-java "8.0.19"]
+   [mysql/mysql-connector-java "8.0.23"]
    ;; http://ianrumford.github.io/blog/2012/11/17/first-take-on-contracts-in-clojure/
    [org.clojure/core.contracts "0.0.6"]
    [org.clojure/core.memoize "1.0.236"]
@@ -72,7 +72,7 @@
    ;; ;;Formalization of integers in LaTTe.
    ;; [latte-integers "0.9.0-SNAPSHOT"]
 
-   [funcool/cats "2.3.6"]
+   [funcool/cats "2.4.1"]
 
    ;; logging doesn't work out-of-the-box
    ;; [org.clojure/tools.logging "0.4.1"]
@@ -82,18 +82,18 @@
    [org.python/jython-standalone "2.7.2"]
    ;; Clojure Jython interop
    [clojure-python "1.0.0"]
-   [midje "1.9.9"]
+   [midje "1.9.10"]
 
 
    [halfling "1.2.1"]
 
-   [org.clojure/data.json "1.0.0"]]
+   [org.clojure/data.json "2.0.2"]]
   :plugins
   [;; a plugin to tell you your code is bad, and that you should feel bad
    [lein-bikeshed "0.5.2"]
    ;; Drive leiningen project version from git instead of the other way around
    [com.roomkey/lein-v "7.2.0"]
-   [lein-figwheel "0.5.19" :exclusions [org.clojure/clojure]]
+   [lein-figwheel "0.5.20" :exclusions [org.clojure/clojure]]
    [lein-cljsbuild "1.1.8"]
    ;; autocompile theGarden stylesheets - see the [garden "..."] dependency
    [lein-garden "0.3.0"]
@@ -132,16 +132,16 @@
                         :optimizations :none}}]}
   :profiles
   {:uberjar {:aot :all}
-   :dev {:dependencies [[figwheel-sidecar "0.5.19"
+   :dev {:dependencies [[figwheel-sidecar "0.5.20"
                          :exclusions [com.google.guava/guava
                                       commons-codec
                                       org.clojure/tools.analyzer
                                       org.clojure/tools.analyzer.jvm]]
-                        [org.clojure/test.check "1.0.0"] ; for clojure.spec
-                        [cider/piggieback "0.4.2"]
+                        [org.clojure/test.check "1.1.0"] ; for clojure.spec
+                        [cider/piggieback "0.5.2"]
                         ;; [com.cemerick/piggieback "0.2.2"]
                         [ns-tracker "0.4.0"]
-                        [binaryage/devtools "1.0.0"]
+                        [binaryage/devtools "1.0.2"]
                         ]
          ;; Leads to Error loading cemerick.piggieback ...
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
