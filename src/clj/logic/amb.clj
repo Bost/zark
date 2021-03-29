@@ -1,10 +1,10 @@
 (ns logic.amb
   "Jonathan Bartlett: Continuations: The Swiss Army Knife of Flow Control
   https://youtu.be/Ju3KKu_mthg?t=1698"
-  (:use clojure.contrib.monads))
+  (:use clojure.algo.monads))
 
 (defn amb
-  "Can be implemented using continuation"
+  "Ambiguous value operator. It can be implemented using continuation"
   [wss]
   (let [valid-word (fn [w1 w2]
                      ;; last letter of the word w1 must be the same as the first
