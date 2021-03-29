@@ -58,8 +58,7 @@
    ;; [org.apache.commons/commons-email "1.4"] ; sending emails
    [clj-ssh "0.5.14"]
    [funcool/cuerdas "2020.03.26-3"] ; string manipulation - (str/surround % "'")
-   ;; (clojure.core.typed/check-ns) produces 'OutOfMemoryError PermGen space'
-   [org.clojure/core.typed "0.6.0" :classifier "slim"] ;; slim vs. fat/ueberjar
+   [org.clojure.typed/runtime.jvm "1.0.1"]
 
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
@@ -142,6 +141,7 @@
                         ;; [com.cemerick/piggieback "0.2.2"]
                         [ns-tracker "0.4.0"]
                         [binaryage/devtools "1.0.2"]
+                        [org.clojure.typed/checker.jvm "1.0.1"]
                         ]
          ;; Leads to Error loading cemerick.piggieback ...
          ;; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
