@@ -444,7 +444,8 @@ not-any?
 (reduce rfs/last [1 2 3 4]) ;; => 4
 (reduce rfs/some [1 2 3 4]) ;; => returns 2; I'd expect 1
 (x/some identity [1 2 3 4]) ;; => 1
-(x/last identity [1 2 3 4]) ;; throws 'Wrong number of args (2) passed to: net.cgrand.xforms/reduce/fn--35656'
+;; throws 'Wrong number of args (2) passed to: net.cgrand.xforms/reduce/fn--35656'
+;; (x/last identity [1 2 3 4])
 
 ;; And here I'd expect same types:
 
