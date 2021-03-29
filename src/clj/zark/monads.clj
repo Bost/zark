@@ -90,111 +90,35 @@
 
 (f 1)
 
-(defprotocol ltime-monad-protocol
-  "Accumulation of values into containers"
-  (ltime-m-combine [container1 container2]
-  "combine two containers, return new container"))
-
-(extend-protocol ltime-monad-protocol
-  clojure.lang.PersistentArrayMap
-  (ltime-m-combine [c1 c2]
-    ((comp
-      (fn [c2]
-        (update-in c2 [:idx] (fn [v]
-                               (+ v (:idx c1))
-                               #_(inc (or (:idx c1) 0)))))
-      (fn [c2]
-        (update-in c2 [:total] (fn [v]
-                                 #_v
-                                 (+ v (:total c1))))))
-     c2)))
-
-(defn ltime-m
-  "Monad describing computations that accumulate data on the side, e.g. for
-   logging. The monadic values have the structure [value log]."
-  []
-  (monad
-   [m-result  (fn m-result-ltime [v]
-                [v {:b 0 :e 0 :total 0 :idx 0}])
-    m-bind
-    (fn m-bind-ltime [mv f]
-      (let [[v1 a1] mv
-            [[v2 a2] acc] (let [tbeg
-                                0
-                                #_(System/currentTimeMillis)]
-                            (let [v (f v1)] ;; v is a monadic value already
-                              (let [tend
-                                    0
-                                    #_(System/currentTimeMillis)]
-                                [v {:b tbeg :e tend :total (- tend tbeg)}])))
-            ]
-        [v2 (ltime-m-combine a1 a2)]))]))
-
-
-(defn m-result [v]
-  [v {:b 0 :e 0 :total 0 :idx 0}])
-
-(defn m-inc [x]
-  (let [[v m] (m-result (inc x))]
-    [v (update-in m [:idx]
-                  inc
-                  #_(fn [_] 0))]))
-
-(defn ltime-m-combine [c1 c2]
-  ((comp
-    (fn [c2]
-      (update-in c2 [:idx] (fn [v] (+ v (:idx c1)))))
-    (fn [c2]
-      (update-in c2 [:total] (fn [v] (+ v (:total c1))))))
-   c2))
-
-(defn m-bind [mv f]
+(defn check-monadic-laws
+  "TODO generate plain value `v` and the function `f` using spec"
+  [monad-m]
   (let [
-        [v1 a1] mv
-        [[v2 a2] acc] (let [tbeg
-                            0
-                            #_(System/currentTimeMillis)]
-                        (let [v (f v1)] ;; v is a monadic value already
-                          (let [tend
-                                0
-                                #_(System/currentTimeMillis)]
-                            [v {:b tbeg :e tend :total (- tend tbeg)}])))
-        ]
-    [v2 (ltime-m-combine a1 a2)]))
+        v 1
+        f inc
+        hm
+        (with-monad (monad-m)
+          {:left-identity
+           (= (domonad
+               [x (m-result v)]
+               (f v))
+              (m-result (f v)))
 
-;; 1. monadic law:
-(= (m-bind (m-result 1) m-inc)
-   (m-inc 1))
+           :right-identity
+           (= (domonad
+               [x (m-result v)]
+               x)
+              (m-result v))
 
-(domonad (ltime-m)
-         [x (m-result 1)]
-         (inc x))
-
-;; 2. monadic law:
-(= (m-bind (m-result 1) m-result)
-   (m-result 1))
-
-(= (domonad (ltime-m)
-            [x (m-result 1)]
-            x)
-   (m-result 1))
-
-;; 3. monadic law doesn't hold cause (System/currentTimeMillis) is different for
-;; every invocation
-(= (m-bind (m-bind (m-result 1) m-inc)
-           m-inc)
-   (m-bind (m-result 1)
-           (fn [x] (m-bind (m-inc x) m-inc))
-           )
-   )
-
-(= (domonad (ltime-m)
-            [y (domonad (ltime-m)
-                        [x (m-result 1)]
-                        (inc x))]
-            (inc y))
-   (domonad (ltime-m)
-            [x (m-result 1)
-             y (m-result (inc x))]
-            (inc y))
-   )
+           :associativity
+           (= (domonad
+               [y (domonad
+                   [x (m-result v)]
+                   (f x))]
+               (f y))
+              (domonad
+               [x (m-result v)
+                y (m-result (f x))]
+               (f y)))})]
+    (if (every? true? (vals hm))
+      true hm)))

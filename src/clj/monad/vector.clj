@@ -100,21 +100,25 @@
 (defn test-monad-laws-identity
   "Identity law: μ ∘ Tη = μ ∘ ηT = idT"
   []
-  (and (= (m-bind (m-result 3) mf)
-          (mf 3))
-       (= (m-bind (m-result 3) m-result)
-          (m-result 3))
+  (and
+   ;; left identity law
+   (= (m-bind (m-result 3) mf)
+      (mf 3))
+   ;; right identity law
+   (= (m-bind (m-result 3) m-result)
+      (m-result 3))
 
-       ;; identity with respect to zero
-       (= (m-bind (m-zero) mf)
-          (mf 0))
-       (= (m-bind (m-zero) m-result)
-          (m-result 0))
+   ;; left identity law with respect to zero
+   (= (m-bind (m-zero) mf)
+      (mf 0))
+   ;; right identity law with respect to zero
+   (= (m-bind (m-zero) m-result)
+      (m-result 0))
 
-       ;; symetry of plus with respect to zero: a + 0 = 0 + a = a
-       (= (m-plus (m-result 3) (m-zero))
-          (m-plus (m-zero) (m-result 3))
-          (m-result 3))))
+   ;; symetry of plus with respect to zero: a + 0 = 0 + a = a
+   (= (m-plus (m-result 3) (m-zero))
+      (m-plus (m-zero) (m-result 3))
+      (m-result 3))))
 
 (defn test-monad-laws-assoc
   "Associativity law: μ ∘ Tμ = μ ∘ μT"
