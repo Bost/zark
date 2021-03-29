@@ -322,30 +322,6 @@
 ;; (transduce identity m= [1 1]) ;; throws exception
 ;; (transduce identity m= [1 2]) ;; throws exception
 
-(defn +
-  "Returns the sum of nums. (+) returns 0. Does not auto-promote
-  longs, will throw on overflow. See also: +'"
-  {:inline (nary-inline 'add 'unchecked_add)
-   :inline-arities >1?
-   :added "1.2"}
-  ([] 0)
-  ([x] (cast Number x))
-  ([x y] (. clojure.lang.Numbers (add x y)))
-  ([x y & more]
-   (reduce1 + (+ x y) more)))
-
-(defn -
-  "If no ys are supplied, returns the negation of x, else subtracts
-  the ys from x and returns the result. Does not auto-promote
-  longs, will throw on overflow. See also: -'"
-  {:inline (nary-inline 'minus 'unchecked_minus)
-   :inline-arities >0?
-   :added "1.2"}
-  ([x] (. clojure.lang.Numbers (minus x)))
-  ([x y] (. clojure.lang.Numbers (minus x y)))
-  ([x y & more]
-   (reduce1 - (- x y) more)))
-
 (let [f +
       coll []
       ;; coll nil
@@ -353,9 +329,8 @@
       ]
   (apply xf [f coll]))
 
-
-(= (identity f) f)
 (defn f [])
+(= (identity f) f)
 
 ;; Ugh 1.
 (= (identity (defn f [])) (defn f [])) ;; => true
@@ -363,28 +338,115 @@
 
 ;; Ugh 2.
 ((comp identity +)) ;; => 0
-((comp + identity)) ;; throws exception
+;; ((comp + identity)) ;; throws exception
 
 ;; Ugh 3.
 (+) ;; => 0
-(-) ;; throws exception
+;; (-) ;; throws exception
 
-(=) ;; throws exception
-(*) ;; throws exception
-(/) ;; throws exception
+;; (=) ;; throws exception
+;; (*) ;; throws exception
+;; (/) ;; throws exception
 
 ;; Ugh 4.
-(boolean) ;; throws exception
-(not) ;; throws exception
+;; (boolean) ;; throws exception
+;; (not) ;; throws exception
 (or)  ;; => nil
 (and) ;; => true
 
-(bit-or)  ;; exception
-(bit-and) ;; exception
+;; (bit-or)  ;; exception
+;; (bit-and) ;; exception
 
-(bit-and 1) ;; exception
+;; (bit-and 1) ;; exception
 (and 1)     ;; => 1
 
 ;; TODO
 every?
 not-any?
+
+;; several transducers can be given, without using 'comp'
+(eduction (filter even?) (map inc)
+          (range 5))
+;; TODO see https://ask.clojure.org/index.php/8654/transducers-and-maps?show=8654#q8654
+;; => (1 3 5)
+
+(sequence
+ (eduction (filter even?) (map inc)
+           (range 5)))
+;; => (1 3 5)
+
+;; transducer pipeline debugging:
+;; Renzo Borgatti - Clojure Transducers In The Wild
+;; https://youtu.be/Tn05cXrhBvg?t=1311
+
+;; https://github.com/cgrand/xforms/ issue 39:
+;; When I think about it again and take a look at the [transducer type signature](https://clojure.org/reference/transducers#_creating_transducers) then my original question may not be completely wrong. Hmm. Except that, the reduction process should be stopped using `reduced`. So here again:
+;; ```clojure
+;; (defn first
+;;   ([] nil)
+;;   ([x] x)
+;;   ([fst lst] (reduced fst)))
+;; ```
+;; Another thing, the [`sum`](https://github.com/cgrand/xforms/blob/62375212a8604daad631c9024e9dbe1db4ec276b/src/net/cgrand/xforms/rfs.cljc#L105) function doesn't return *first* logical value:
+;; ```clojure
+
+;; ```
+
+(defn dbg-last
+  "Reducing function that returns the last value."
+  ([]
+   (println ";; => nil")
+   nil)
+  ([x]
+   (println ";; =>" x)
+   x)
+  ([fst lst]
+   (println ";; fst" fst "lst" lst "=>" lst "; reduction continues...")
+   lst))
+
+(defn dbg-first
+  ([]
+   (println ";; => nil")
+   nil)
+  ([x]
+   (println ";; =>" x)
+   x)
+  ([fst lst]
+   (println ";; fst" fst "lst" lst "=>" (reduced fst) "; stopping reduction")
+   #_fst
+   (reduced fst)))
+
+(defn dbg-some
+  "Reducing function that returns the first logical true value."
+  ([]
+   (println ";; => nil")
+   nil)
+  ([x]
+   (println ";; =>" x)
+   x)
+  ([fst lst]
+   (println ";; fst" fst "lst" lst "=>" (when lst (reduced lst)) "; stopping reduction")
+   (when lst (reduced lst))))
+
+;; See https://github.com/cgrand/xforms/ issues 39
+(require
+ '[net.cgrand.xforms :as x]
+ '[net.cgrand.xforms.rfs :as rfs])
+
+(into {} (x/by-key identity rfs/last) [1 2 3 4]) ;; => {1 1, 2 2, 3 3, 4 4}
+(into {} (x/by-key identity x/last) [1 2 3 4])    ;; => {1 1, 2 2, 3 3, 4 4}
+(into {} (x/by-key identity rfs/some) [1 2 3 4]) ;; => {1 1, 2 2, 3 3, 4 4}
+;; throws 'Wrong number of args (1) passed to: net.cgrand.xforms/some'
+;; (into {} (x/by-key identity x/some) [1 2 3 4])
+
+;; Also:
+
+(reduce rfs/last [1 2 3 4]) ;; => 4
+(reduce rfs/some [1 2 3 4]) ;; => returns 2; I'd expect 1
+(x/some identity [1 2 3 4]) ;; => 1
+(x/last identity [1 2 3 4]) ;; throws 'Wrong number of args (2) passed to: net.cgrand.xforms/reduce/fn--35656'
+
+;; And here I'd expect same types:
+
+(type (rfs/last identity [1 2 3 4])) ;; => clojure.lang.PersistentVector
+(type (rfs/some identity [1 2 3 4])) ;; => clojure.lang.Reduced
