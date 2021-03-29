@@ -63,7 +63,7 @@
    ;; [cauchy-jobs-kestrel "0.1.0"] ;; distributed message queue on the JVM
 
    ;; Laboratory for Type Theory Experiments
-   ;; [latte "1.0b1-SNAPSHOT"]
+   [latte "1.0b9-SNAPSHOT"]
    ;; ;; The core "standard" library for the LaTTe proof assistant.
    ;; [latte-prelude "0.2.0-SNAPSHOT"]
    ;; ;; Formalization of (typed) Set theory in LaTTe.
@@ -86,7 +86,13 @@
 
    [halfling "1.2.1"]
 
-   [org.clojure/data.json "2.0.2"]]
+   [org.clojure/data.json "2.0.2"]
+   ;; Core.async is not provided as part of Clojure's standard distribution, and
+   ;; must be included as a dependency.
+   [org.clojure/core.async "1.3.610"]
+
+   [net.cgrand/xforms "0.19.2"]
+   ]
   :plugins
   [;; a plugin to tell you your code is bad, and that you should feel bad
    [lein-bikeshed "0.5.2"]
