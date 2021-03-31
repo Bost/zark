@@ -13,6 +13,7 @@
    [org.clojure/core.rrb-vector "0.1.2"]
    [org.clojure/core.logic "1.0.0"]
    [org.clojure/algo.monads "0.1.6"]
+   [org.clojure/algo.generic "0.1.3"]
 
    [frankiesardo/tripod "0.2.0"] ; om-next example app
    [sablono "0.8.6"] ; hiccup style templating for om-next
